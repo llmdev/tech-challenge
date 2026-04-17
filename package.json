@@ -1,0 +1,19 @@
+{
+  "name": "tech-challenge",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter=./apps/* dev",
+    "build": "pnpm --filter=./packages/* build && pnpm --filter=./apps/* build",
+    "lint": "biome lint --write .",
+    "lint:check": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "storybook": "pnpm --filter=storybook dev",
+    "web": "pnpm --filter=web dev"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.12",
+    "typescript": "^5.4.5"
+  }
+}
