@@ -35,6 +35,9 @@ importers:
       '@repo/statement':
         specifier: workspace:*
         version: link:../../packages/statement
+      '@repo/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
       '@repo/transaction-form':
         specifier: workspace:*
         version: link:../../packages/transaction-form
@@ -105,6 +108,9 @@ importers:
       '@repo/button':
         specifier: workspace:*
         version: link:../../packages/button
+      '@repo/icons':
+        specifier: workspace:*
+        version: link:../../packages/icons
       '@repo/navbar':
         specifier: workspace:*
         version: link:../../packages/navbar
@@ -114,6 +120,9 @@ importers:
       '@repo/statement':
         specifier: workspace:*
         version: link:../../packages/statement
+      '@repo/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
       '@repo/transaction-form':
         specifier: workspace:*
         version: link:../../packages/transaction-form
@@ -271,6 +280,18 @@ importers:
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.28
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+
+  packages/theme:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.19.39
+      tailwindcss:
+        specifier: ^3.4.14
+        version: 3.4.19
       typescript:
         specifier: ^5.4.5
         version: 5.9.3

@@ -3,11 +3,15 @@ import { Sidebar } from "@repo/sidebar";
 import { BalanceCard } from "@repo/balance-card";
 import { TransactionForm } from "@repo/transaction-form";
 import { Statement } from "@repo/statement";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar userName="Joana da Silva Oliveira" />
+      <Navbar
+        userName="Joana da Silva Oliveira"
+        actions={<ThemeToggle />}
+      />
 
       <main className="flex-1 p-6">
         <div className="max-w-5xl mx-auto flex gap-5 h-full">

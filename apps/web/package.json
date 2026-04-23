@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@repo/button": "workspace:*",
+    "@repo/icons": "workspace:*",
     "@repo/navbar": "workspace:*",
     "@repo/sidebar": "workspace:*",
     "@repo/balance-card": "workspace:*",
     "@repo/transaction-form": "workspace:*",
     "@repo/statement": "workspace:*",
+    "@repo/theme": "workspace:*",
     "next": "^15.3.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
