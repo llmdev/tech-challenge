@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { MockProvider } from "@/components/mock-provider";
 
 export const metadata: Metadata = {
   title: "Tech Challenge",
@@ -20,7 +21,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <MockProvider>{children}</MockProvider>
+      </body>
     </html>
   );
 }
