@@ -17,6 +17,7 @@ Sempre execute os comandos pnpm a partir da raiz do repositório.
 ## Arquitetura
 
 - `packages/@repo/*` — componentes presentacionais, sem etapa de build (source `.tsx` exportado diretamente)
+- `packages/theme` — plugin Tailwind com tokens de tema (`defaultThemePlugin`, `defaultTheme`, `defaultThemeVars`, `darkThemeVars`)
 - `apps/web` — app Next.js 15, transpila todos os pacotes `@repo/*` via `next.config.ts`
 - `apps/storybook` — Storybook 8 + Vite, stories em `src/stories/`
 
@@ -30,7 +31,12 @@ Sempre execute os comandos pnpm a partir da raiz do repositório.
 
 **Estilização**
 - Somente Tailwind CSS — sem CSS modules ou estilos inline
-- Usar variáveis CSS (`--primary`, `--background`, etc.) para cores do tema, nunca valores hex/hsl fixos
+- Tokens de tema centralizados em `@repo/theme` (`packages/theme/src/index.ts`):
+  - `defaultThemePlugin` — plugin Tailwind que injeta as variáveis CSS em `:root` (light) e `.dark`
+  - `defaultTheme` — extensão de cores/borderRadius para o `tailwind.config` consumir via `hsl(var(--token))`
+  - `defaultThemeVars` / `darkThemeVars` — os valores HSL crus das variáveis, caso precisem ser reutilizados
+- Usar sempre os tokens semânticos do tema via classes Tailwind (`bg-background`, `text-primary`, `border-border`, etc.) — nunca valores hex/hsl fixos nem variáveis CSS raw diretamente nos componentes
+- Dark mode: controlado pela classe `.dark` no `<html>`, gerenciada pela aplicação — os componentes não precisam de lógica própria de tema
 - Mesclar classes com o padrão `cn(clsx(...), twMerge(...))` — já configurado em todos os componentes
 - Variantes via `class-variance-authority` (CVA) quando o componente tiver múltiplas variações visuais
 
