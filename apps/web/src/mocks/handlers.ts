@@ -53,6 +53,14 @@ let nextId = store.reduce((max, tx) => Math.max(max, parseInt(tx.id, 10)), 0) + 
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+function parseAmountValue(amount: string): number {
+  const sign = amount.includes("+") ? 1 : -1;
+  const num = parseFloat(
+    amount.replace(/[^0-9,.]/g, "").replace(/\./g, "").replace(",", ".")
+  );
+  return sign * (Number.isNaN(num) ? 0 : num);
+}
+
 const PT_MONTHS = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
   "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
@@ -91,6 +99,15 @@ function groupByMonth(transactions: Transaction[]): MonthGroup[] {
 // ── Handlers ──────────────────────────────────────────────────────────────────
 
 export const handlers = [
+  http.get("/api/saldo", () => {
+    const total = store.reduce((acc, tx) => acc + parseAmountValue(tx.amount), 0);
+    const formatted = total.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    return HttpResponse.json({ balance: `R$ ${formatted}` });
+  }),
+
   http.get("/api/transferencias", () => {
     return HttpResponse.json(groupByMonth(store));
   }),

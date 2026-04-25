@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@repo/button";
-import { EyeIcon, PencilIcon, TrashIcon, SearchIcon, PlusIcon } from "@repo/icons";
+import { Input } from "@repo/input";
+import { EyeIcon, PencilIcon, TrashIcon, SearchIcon, PlusIcon, ChevronUpIcon, ChevronDownIcon } from "@repo/icons";
 import type { MonthGroup, Transaction } from "@/mocks/handlers";
 import { TransactionModal } from "./transaction-modal";
 
@@ -13,6 +14,21 @@ const FILTER_LABELS: Record<Filter, string> = {
   credit: "Entradas",
   debit: "Saídas",
 };
+
+function applySearch(groups: MonthGroup[], term: string): MonthGroup[] {
+  if (!term.trim()) return groups;
+  const lower = term.toLowerCase();
+  return groups
+    .map((group) => ({
+      ...group,
+      transactions: group.transactions.filter(
+        (tx) =>
+          tx.description.toLowerCase().includes(lower) ||
+          tx.institution.toLowerCase().includes(lower)
+      ),
+    }))
+    .filter((group) => group.transactions.length > 0);
+}
 
 function applyFilter(groups: MonthGroup[], filter: Filter): MonthGroup[] {
   if (filter === "all") return groups;
@@ -28,10 +44,30 @@ function totalTransactions(groups: MonthGroup[]): number {
   return groups.reduce((acc, g) => acc + g.transactions.length, 0);
 }
 
+function parseAmount(amount: string): number {
+  const sign = amount.includes("+") ? 1 : -1;
+  const num = parseFloat(
+    amount.replace(/[^0-9,.]/g, "").replace(/\./g, "").replace(",", ".")
+  );
+  return sign * (Number.isNaN(num) ? 0 : num);
+}
+
+function calculateBalance(groups: MonthGroup[]): string {
+  const total = groups
+    .flatMap((g) => g.transactions)
+    .reduce((acc, tx) => acc + parseAmount(tx.amount), 0);
+  const formatted = Math.abs(total).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  return total < 0 ? `- R$ ${formatted}` : `R$ ${formatted}`;
+}
+
 export function TransferenciasContent() {
   const [allGroups, setAllGroups] = useState<MonthGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("all");
+  const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Transaction | undefined>(undefined);
 
@@ -64,8 +100,10 @@ export function TransferenciasContent() {
     setModalOpen(true);
   }
 
-  const filteredGroups = applyFilter(allGroups, filter);
+  const searchedGroups = applySearch(allGroups, search);
+  const filteredGroups = applyFilter(searchedGroups, filter);
   const count = totalTransactions(filteredGroups);
+  const balance = calculateBalance(filteredGroups);
 
   return (
     <>
@@ -80,24 +118,26 @@ export function TransferenciasContent() {
       <div className="bg-card rounded-2xl p-6">
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Transferências</h1>
+            <h1 className="text-2xl font-bold text-foreground">Transações</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
               {loading ? "Carregando..." : `${count} transações encontradas`}
             </p>
           </div>
           <Button icon={<PlusIcon className="w-4 h-4" />} onClick={openCreate}>
-            Nova transferência
+            Nova transaçao
           </Button>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="relative flex-1 max-w-xs">
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Buscar transferência..."
-              readOnly={true}
-              className="w-full pl-9 pr-4 py-2 text-sm bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground outline-none cursor-default"
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar transações..."
+              variant="outline"
+              size="sm"
+              className="pl-9"
             />
           </div>
 
@@ -124,6 +164,8 @@ export function TransferenciasContent() {
       <TransferenciasList
         groups={filteredGroups}
         loading={loading}
+        balance={balance}
+        filter={filter}
         onEdit={openEdit}
         onDelete={handleDelete}
       />
@@ -131,20 +173,76 @@ export function TransferenciasContent() {
   );
 }
 
+const BALANCE_LABEL: Record<Filter, string> = {
+  all: "Saldo total",
+  credit: "Total de entradas",
+  debit: "Total de saídas",
+};
+
 function TransferenciasList({
   groups,
   loading,
+  balance,
+  filter,
   onEdit,
   onDelete,
 }: {
   groups: MonthGroup[];
   loading: boolean;
+  balance: string;
+  filter: Filter;
   onEdit: (tx: Transaction) => void;
   onDelete: (id: string) => void;
 }) {
+  const isNegative = balance.includes("-");
+  const colorClass = loading ? "text-muted-foreground" : isNegative ? "text-destructive" : "text-accent";
+
+  const balanceRow = (
+    <div
+      className={`relative flex items-center justify-between rounded-xl px-5 py-4 mb-6 overflow-hidden border-l-[3px] ${
+        loading
+          ? "bg-muted/40 border-l-border"
+          : isNegative
+            ? "bg-destructive/5 border-l-destructive"
+            : "bg-accent/10 border-l-accent"
+      }`}
+    >
+      {/* decorative blurred orb */}
+      <div
+        className={`absolute -right-4 -top-4 w-24 h-24 rounded-full blur-2xl pointer-events-none ${
+          loading ? "opacity-0" : isNegative ? "bg-destructive/20" : "bg-accent/20"
+        }`}
+      />
+
+      <div className="relative z-10">
+        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mb-0.5">
+          {BALANCE_LABEL[filter]}
+        </p>
+        <p className={`text-2xl font-bold tracking-tight tabular-nums ${colorClass}`}>
+          {loading ? "—" : balance}
+        </p>
+      </div>
+
+      <div
+        className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 ${
+          loading ? "bg-muted" : isNegative ? "bg-destructive/10" : "bg-accent/15"
+        }`}
+      >
+        {loading ? (
+          <span className="w-4 h-4 rounded-full bg-muted-foreground/20" />
+        ) : isNegative ? (
+          <ChevronDownIcon className="w-4 h-4 text-destructive" />
+        ) : (
+          <ChevronUpIcon className="w-4 h-4 text-accent" />
+        )}
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="bg-card rounded-2xl p-6">
+        {balanceRow}
         <p className="text-sm text-muted-foreground">Carregando...</p>
       </div>
     );
@@ -152,14 +250,19 @@ function TransferenciasList({
 
   if (groups.length === 0) {
     return (
-      <div className="bg-card rounded-2xl p-6 flex items-center justify-center py-16">
-        <p className="text-sm text-muted-foreground">Nenhuma transação encontrada.</p>
+      <div className="bg-card rounded-2xl p-6">
+        {balanceRow}
+        <div className="flex items-center justify-center py-12">
+          <p className="text-sm text-muted-foreground">Nenhuma transação encontrada.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-card rounded-2xl p-6 space-y-8">
+    <div className="bg-card rounded-2xl p-6">
+      {balanceRow}
+      <div className="space-y-8">
       {groups.map((group) => (
         <div key={group.month}>
           <div className="flex items-center gap-3 mb-3">
@@ -239,6 +342,7 @@ function TransferenciasList({
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }

@@ -12,6 +12,7 @@ export interface BalanceCardProps {
   accountType?: string;
   balance?: string;
   balanceVisible?: boolean;
+  onToggleVisibility?: () => void;
   className?: string;
 }
 
@@ -21,6 +22,7 @@ function BalanceCard({
   accountType = "Conta Corrente",
   balance = "R$ 2.500,00",
   balanceVisible = true,
+  onToggleVisibility,
   className,
 }: BalanceCardProps) {
   return (
@@ -35,11 +37,18 @@ function BalanceCard({
 
       <div className="flex items-center gap-2 mb-1">
         <span className="text-sm font-semibold tracking-wide">Saldo</span>
-        {balanceVisible ? (
-          <EyeIcon className="w-5 h-5 text-red-400" />
-        ) : (
-          <EyeOffIcon className="w-5 h-5 text-red-400" />
-        )}
+        <button
+          type="button"
+          onClick={onToggleVisibility}
+          aria-label={balanceVisible ? "Ocultar saldo" : "Exibir saldo"}
+          className="focus:outline-none"
+        >
+          {balanceVisible ? (
+            <EyeIcon className="w-5 h-5 text-red-400" />
+          ) : (
+            <EyeOffIcon className="w-5 h-5 text-red-400" />
+          )}
+        </button>
       </div>
       <div className="border-b border-red-400/60 mb-3" />
       <p className="text-xs text-primary-foreground/60 mb-1">{accountType}</p>
