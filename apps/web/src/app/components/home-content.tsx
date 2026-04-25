@@ -56,7 +56,7 @@ export function HomeContent() {
         balanceVisible={balanceVisible}
         onToggleVisibility={() => setBalanceVisible((v) => !v)}
       />
-      <TransactionForm onSuccess={handleTransactionSuccess} />
+      <TransactionForm onSuccess={handleTransactionSuccess} variant="card" />
     </>
   );
 }
