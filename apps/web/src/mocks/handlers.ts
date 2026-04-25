@@ -15,11 +15,11 @@ export interface MonthGroup {
   transactions: Transaction[];
 }
 
-// ── Mutable flat store ────────────────────────────────────────────────────────
+// ── Persistence ───────────────────────────────────────────────────────────────
 
-let nextId = 11;
+const STORAGE_KEY = "msw_transferencias";
 
-let store: Transaction[] = [
+const SEED: Transaction[] = [
   { id: "1",  type: "credit", category: "receita",  description: "Depósito recebido",     institution: "Banco Inter",       date: "21/11/2024", amount: "+ R$ 1.500,00" },
   { id: "2",  type: "debit",  category: "transf",   description: "Transferência enviada", institution: "João Silva",        date: "18/11/2024", amount: "- R$ 500,00"   },
   { id: "3",  type: "debit",  category: "fatura",   description: "Pagamento de fatura",   institution: "Cartão Nubank",     date: "15/11/2024", amount: "- R$ 890,00"   },
@@ -31,6 +31,25 @@ let store: Transaction[] = [
   { id: "9",  type: "credit", category: "pix",      description: "Pix recebido",          institution: "Ana Paula",         date: "20/09/2024", amount: "+ R$ 180,00"   },
   { id: "10", type: "debit",  category: "transf",   description: "Transferência enviada", institution: "Pedro Alves",       date: "15/09/2024", amount: "- R$ 750,00"   },
 ];
+
+function loadStore(): Transaction[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw) as Transaction[];
+  } catch {}
+  return [...SEED];
+}
+
+function saveStore(data: Transaction[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {}
+}
+
+// ── Mutable flat store ────────────────────────────────────────────────────────
+
+let store: Transaction[] = loadStore();
+let nextId = store.reduce((max, tx) => Math.max(max, parseInt(tx.id, 10)), 0) + 1;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -80,6 +99,7 @@ export const handlers = [
     const body = (await request.json()) as Omit<Transaction, "id">;
     const created: Transaction = { ...body, id: String(nextId++) };
     store.push(created);
+    saveStore(store);
     return HttpResponse.json(created, { status: 201 });
   }),
 
@@ -89,12 +109,14 @@ export const handlers = [
     const idx = store.findIndex((tx) => tx.id === id);
     if (idx === -1) return new HttpResponse(null, { status: 404 });
     store[idx] = { ...body, id };
+    saveStore(store);
     return HttpResponse.json(store[idx]);
   }),
 
   http.delete("/api/transferencias/:id", ({ params }) => {
     const { id } = params as { id: string };
     store = store.filter((tx) => tx.id !== id);
+    saveStore(store);
     return new HttpResponse(null, { status: 204 });
   }),
 ];

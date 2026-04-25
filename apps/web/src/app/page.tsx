@@ -6,8 +6,8 @@ import { Statement } from "@repo/statement";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const menuItens = [
-  { label: "Início", href: "/", active: true },
-  { label: "Transferências", href: "/transferencias" }
+  { label: "Início", href: "/", active: true  },
+  { label: "Transações", href: "/transacoes" },
 ];
 
 export default function Home() {
