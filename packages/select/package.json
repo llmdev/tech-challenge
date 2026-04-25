@@ -1,5 +1,5 @@
 {
-  "name": "@repo/transaction-form",
+  "name": "@repo/select",
   "version": "0.0.1",
   "private": true,
   "main": "./src/index.tsx",
@@ -8,9 +8,9 @@
     ".": "./src/index.tsx"
   },
   "dependencies": {
-    "@repo/button": "workspace:*",
+    "@radix-ui/react-select": "^2.1.2",
     "@repo/icons": "workspace:*",
-    "@repo/select": "workspace:*",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.5.4"
   },

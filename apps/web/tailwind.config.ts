@@ -11,6 +11,7 @@ const config: Config = {
     "../../packages/balance-card/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/transaction-form/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/statement/src/**/*.{js,ts,jsx,tsx}",
+    "../../packages/select/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: defaultTheme,

@@ -29,6 +29,7 @@ Sempre execute os comandos pnpm a partir da raiz do repositório.
 - Sempre aceitar a prop `className` e mesclá-la com `cn()` (clsx + tailwind-merge)
 - Usar `React.forwardRef` quando o componente renderizar um elemento do DOM
 
+
 **Estilização**
 - Somente Tailwind CSS — sem CSS modules ou estilos inline
 - Tokens de tema centralizados em `@repo/theme` (`packages/theme/src/index.ts`):

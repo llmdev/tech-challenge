@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Button } from "@repo/button";
-import { ChevronDownIcon } from "@repo/icons";
+import { Select } from "@repo/select";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -50,22 +50,10 @@ function TransactionForm({
       </h2>
 
       <div className="space-y-4 relative z-10">
-        <div className="relative">
-          <select
-            defaultValue=""
-            className="w-full appearance-none bg-white border border-border rounded-md px-4 py-3 pr-10 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary cursor-pointer"
-          >
-            <option value="" disabled={true}>
-              Selecione o tipo de transação
-            </option>
-            {transactionTypes.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary pointer-events-none" />
-        </div>
+        <Select
+          placeholder="Selecione o tipo de transação"
+          options={transactionTypes}
+        />
 
         <div>
           <label htmlFor="transaction-amount" className="text-xs text-muted-foreground mb-1.5 block font-medium">

@@ -1,0 +1,102 @@
+- generic:
+  - generic [ref=e6] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e7]:
+      - img [ref=e8]
+    - generic [ref=e11]:
+      - button "Open issues overlay" [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: "0"
+          - generic [ref=e15]: "1"
+        - generic [ref=e16]: Issue
+      - button "Collapse issues badge" [ref=e17]:
+        - img [ref=e18]
+  - alert
+  - generic:
+    - banner:
+      - generic:
+        - button:
+          - img
+      - generic:
+        - generic: Joana da Silva Oliveira
+        - generic:
+          - img
+    - main:
+      - generic:
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /
+                - text: Início
+            - listitem:
+              - link:
+                - /url: /transferencias
+                - text: Transferências
+            - listitem:
+              - link:
+                - /url: /investimentos
+                - text: Investimentos
+            - listitem:
+              - link:
+                - /url: /outros-servicos
+                - text: Outros serviços
+        - generic:
+          - generic:
+            - heading [level=1]: Olá, Joana! :)
+            - paragraph: Quinta-feira, 08/09/2024
+            - generic:
+              - generic: Saldo
+              - img
+            - paragraph: Conta Corrente
+            - paragraph: R$ 2.500,00
+          - generic:
+            - heading [level=2]: Nova transação
+            - generic:
+              - generic:
+                - combobox [expanded]:
+                  - generic: Selecione o tipo de transação
+                  - img
+              - generic:
+                - generic: Valor
+                - textbox: 00,00
+              - button: Concluir transação
+        - generic:
+          - generic:
+            - heading [level=2]: Extrato
+            - generic:
+              - button:
+                - img
+              - button:
+                - img
+          - generic:
+            - generic:
+              - paragraph: Novembro
+              - generic:
+                - generic: Depósito
+                - generic: 18/11/2022
+              - paragraph: R$ 150
+            - generic:
+              - paragraph: Novembro
+              - generic:
+                - generic: Depósito
+                - generic: 21/11/2022
+              - paragraph: R$ 100
+            - generic:
+              - paragraph: Novembro
+              - generic:
+                - generic: Depósito
+                - generic: 21/11/2022
+              - paragraph: R$ 50
+            - generic:
+              - paragraph: Novembro
+              - generic:
+                - generic: Transferência
+                - generic: 21/11/2022
+              - paragraph: "-R$ 500"
+  - listbox [ref=e20]:
+    - option "Depósito" [active] [ref=e21] [cursor=pointer]:
+      - generic [ref=e23]: Depósito
+    - option "Transferência" [ref=e24] [cursor=pointer]:
+      - generic [ref=e26]: Transferência
+    - option "Saque" [ref=e27] [cursor=pointer]:
+      - generic [ref=e29]: Saque

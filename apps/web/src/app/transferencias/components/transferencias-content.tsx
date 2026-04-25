@@ -66,7 +66,7 @@ export function TransferenciasContent() {
             <input
               type="text"
               placeholder="Buscar transferência..."
-              readOnly
+              readOnly={true}
               className="w-full pl-9 pr-4 py-2 text-sm bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground outline-none cursor-default"
             />
           </div>

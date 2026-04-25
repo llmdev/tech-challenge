@@ -15,6 +15,7 @@
     "@repo/balance-card": "workspace:*",
     "@repo/transaction-form": "workspace:*",
     "@repo/statement": "workspace:*",
+    "@repo/select": "workspace:*",
     "@repo/theme": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
