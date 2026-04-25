@@ -17,7 +17,7 @@ export interface MonthGroup {
 
 // ── Persistence ───────────────────────────────────────────────────────────────
 
-const STORAGE_KEY = "msw_transferencias";
+const STORAGE_KEY = "msw_transacoes";
 
 const SEED: Transaction[] = [
   { id: "1",  type: "credit", category: "receita",  description: "Depósito recebido",     institution: "Banco Inter",       date: "21/11/2024", amount: "+ R$ 1.500,00" },
@@ -108,11 +108,11 @@ export const handlers = [
     return HttpResponse.json({ balance: `R$ ${formatted}` });
   }),
 
-  http.get("/api/transferencias", () => {
+  http.get("/api/transacoes", () => {
     return HttpResponse.json(groupByMonth(store));
   }),
 
-  http.post("/api/transferencias", async ({ request }) => {
+  http.post("/api/transacoes", async ({ request }) => {
     const body = (await request.json()) as Omit<Transaction, "id">;
     const created: Transaction = { ...body, id: String(nextId++) };
     store.push(created);
@@ -120,7 +120,7 @@ export const handlers = [
     return HttpResponse.json(created, { status: 201 });
   }),
 
-  http.put("/api/transferencias/:id", async ({ request, params }) => {
+  http.put("/api/transacoes/:id", async ({ request, params }) => {
     const { id } = params as { id: string };
     const body = (await request.json()) as Omit<Transaction, "id">;
     const idx = store.findIndex((tx) => tx.id === id);
@@ -130,7 +130,7 @@ export const handlers = [
     return HttpResponse.json(store[idx]);
   }),
 
-  http.delete("/api/transferencias/:id", ({ params }) => {
+  http.delete("/api/transacoes/:id", ({ params }) => {
     const { id } = params as { id: string };
     store = store.filter((tx) => tx.id !== id);
     saveStore(store);

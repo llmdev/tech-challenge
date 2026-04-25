@@ -63,7 +63,7 @@ function calculateBalance(groups: MonthGroup[]): string {
   return total < 0 ? `- R$ ${formatted}` : `R$ ${formatted}`;
 }
 
-export function TransferenciasContent() {
+export function TransacoesContent() {
   const [allGroups, setAllGroups] = useState<MonthGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("all");
@@ -73,7 +73,7 @@ export function TransferenciasContent() {
 
   const fetchData = useCallback(() => {
     setLoading(true);
-    fetch("/api/transferencias")
+    fetch("/api/transacoes")
       .then((res) => res.json())
       .then((data: MonthGroup[]) => {
         setAllGroups(data);
@@ -86,7 +86,7 @@ export function TransferenciasContent() {
   }, [fetchData]);
 
   async function handleDelete(id: string) {
-    await fetch(`/api/transferencias/${id}`, { method: "DELETE" });
+    await fetch(`/api/transacoes/${id}`, { method: "DELETE" });
     fetchData();
   }
 
@@ -161,7 +161,7 @@ export function TransferenciasContent() {
       </div>
 
       {/* Lista de transações */}
-      <TransferenciasList
+      <TransacoesList
         groups={filteredGroups}
         loading={loading}
         balance={balance}
@@ -179,7 +179,7 @@ const BALANCE_LABEL: Record<Filter, string> = {
   debit: "Total de saídas",
 };
 
-function TransferenciasList({
+function TransacoesList({
   groups,
   loading,
   balance,

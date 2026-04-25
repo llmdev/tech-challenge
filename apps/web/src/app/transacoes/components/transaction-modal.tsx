@@ -121,8 +121,8 @@ export function TransactionModal({
 
     try {
       const url = initial
-        ? `/api/transferencias/${initial.id}`
-        : "/api/transferencias";
+        ? `/api/transacoes/${initial.id}`
+        : "/api/transacoes";
       const method = initial ? "PUT" : "POST";
 
       const res = await fetch(url, {
