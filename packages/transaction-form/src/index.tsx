@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Button } from "@repo/button";
+import { Input } from "@repo/input";
 import { Select } from "@repo/select";
 
 function cn(...inputs: ClassValue[]) {
@@ -55,17 +56,13 @@ function TransactionForm({
           options={transactionTypes}
         />
 
-        <div>
-          <label htmlFor="transaction-amount" className="text-xs text-muted-foreground mb-1.5 block font-medium">
-            Valor
-          </label>
-          <input
-            id="transaction-amount"
-            type="text"
-            defaultValue="00,00"
-            className="w-full bg-white border border-border rounded-md px-4 py-3 text-sm text-center text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          />
-        </div>
+        <Input
+          label="Valor"
+          id="transaction-amount"
+          type="text"
+          defaultValue="00,00"
+          textAlign="center"
+        />
 
         <Button size="default">Concluir transação</Button>
       </div>

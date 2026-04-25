@@ -26,6 +26,9 @@ importers:
       '@repo/icons':
         specifier: workspace:*
         version: link:../../packages/icons
+      '@repo/input':
+        specifier: workspace:*
+        version: link:../../packages/input
       '@repo/navbar':
         specifier: workspace:*
         version: link:../../packages/navbar
@@ -224,6 +227,28 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
 
+  packages/input:
+    dependencies:
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react:
+        specifier: '>=18'
+        version: 19.2.5
+      tailwind-merge:
+        specifier: ^2.5.4
+        version: 2.6.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.28
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+
   packages/navbar:
     dependencies:
       '@repo/icons':
@@ -338,6 +363,9 @@ importers:
       '@repo/icons':
         specifier: workspace:*
         version: link:../icons
+      '@repo/input':
+        specifier: workspace:*
+        version: link:../input
       '@repo/select':
         specifier: workspace:*
         version: link:../select

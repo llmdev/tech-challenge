@@ -11,6 +11,7 @@ const config: Config = {
     "../../packages/transaction-form/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/statement/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/select/src/**/*.{js,ts,jsx,tsx}",
+    "../../packages/input/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: defaultTheme,

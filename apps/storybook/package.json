@@ -13,6 +13,7 @@
     "@repo/navbar": "workspace:*",
     "@repo/sidebar": "workspace:*",
     "@repo/balance-card": "workspace:*",
+    "@repo/input": "workspace:*",
     "@repo/transaction-form": "workspace:*",
     "@repo/statement": "workspace:*",
     "@repo/select": "workspace:*",
