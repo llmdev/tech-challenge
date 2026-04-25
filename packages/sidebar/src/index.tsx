@@ -18,9 +18,7 @@ export interface SidebarProps {
 
 const defaultItems: SidebarItem[] = [
   { label: "Início", href: "/", active: true },
-  { label: "Transferências", href: "/transferencias" },
-  { label: "Investimentos", href: "/investimentos" },
-  { label: "Outros serviços", href: "/outros-servicos" },
+  { label: "Transferências", href: "/transferencias" }
 ];
 
 function Sidebar({ items = defaultItems, className }: SidebarProps) {

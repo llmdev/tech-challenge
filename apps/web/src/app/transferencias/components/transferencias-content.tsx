@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@repo/button";
 import { EyeIcon, PencilIcon, TrashIcon, SearchIcon, PlusIcon } from "@repo/icons";
 import type { MonthGroup, Transaction } from "@/mocks/handlers";
+import { TransactionModal } from "./transaction-modal";
 
 type Filter = "all" | "credit" | "debit";
 
@@ -31,8 +32,11 @@ export function TransferenciasContent() {
   const [allGroups, setAllGroups] = useState<MonthGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("all");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<Transaction | undefined>(undefined);
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
+    setLoading(true);
     fetch("/api/transferencias")
       .then((res) => res.json())
       .then((data: MonthGroup[]) => {
@@ -41,11 +45,37 @@ export function TransferenciasContent() {
       });
   }, []);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  async function handleDelete(id: string) {
+    await fetch(`/api/transferencias/${id}`, { method: "DELETE" });
+    fetchData();
+  }
+
+  function openCreate() {
+    setEditTarget(undefined);
+    setModalOpen(true);
+  }
+
+  function openEdit(tx: Transaction) {
+    setEditTarget(tx);
+    setModalOpen(true);
+  }
+
   const filteredGroups = applyFilter(allGroups, filter);
   const count = totalTransactions(filteredGroups);
 
   return (
     <>
+      <TransactionModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        initial={editTarget}
+        onSuccess={fetchData}
+      />
+
       {/* Cabeçalho e filtros */}
       <div className="bg-card rounded-2xl p-6">
         <div className="flex items-center justify-between mb-5">
@@ -55,7 +85,7 @@ export function TransferenciasContent() {
               {loading ? "Carregando..." : `${count} transações encontradas`}
             </p>
           </div>
-          <Button icon={<PlusIcon className="w-4 h-4" />}>
+          <Button icon={<PlusIcon className="w-4 h-4" />} onClick={openCreate}>
             Nova transferência
           </Button>
         </div>
@@ -91,7 +121,12 @@ export function TransferenciasContent() {
       </div>
 
       {/* Lista de transações */}
-      <TransferenciasList groups={filteredGroups} loading={loading} />
+      <TransferenciasList
+        groups={filteredGroups}
+        loading={loading}
+        onEdit={openEdit}
+        onDelete={handleDelete}
+      />
     </>
   );
 }
@@ -99,9 +134,13 @@ export function TransferenciasContent() {
 function TransferenciasList({
   groups,
   loading,
+  onEdit,
+  onDelete,
 }: {
   groups: MonthGroup[];
   loading: boolean;
+  onEdit: (tx: Transaction) => void;
+  onDelete: (id: string) => void;
 }) {
   if (loading) {
     return (
@@ -184,6 +223,7 @@ function TransferenciasList({
                     icon={<PencilIcon className="w-4 h-4" />}
                     aria-label="Editar"
                     className="w-8 h-8 rounded-full"
+                    onClick={() => onEdit(tx)}
                   />
                   <Button
                     size="icon"
@@ -191,6 +231,7 @@ function TransferenciasList({
                     icon={<TrashIcon className="w-4 h-4" />}
                     aria-label="Excluir"
                     className="w-8 h-8 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => onDelete(tx.id)}
                   />
                 </div>
               </div>

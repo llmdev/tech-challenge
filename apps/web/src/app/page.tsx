@@ -5,6 +5,11 @@ import { TransactionForm } from "@repo/transaction-form";
 import { Statement } from "@repo/statement";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+const menuItens = [
+  { label: "Início", href: "/", active: true },
+  { label: "Transferências", href: "/transferencias" }
+];
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -15,7 +20,7 @@ export default function Home() {
 
       <main className="flex-1 p-6">
         <div className="max-w-5xl mx-auto flex gap-5 h-full">
-          <Sidebar className="w-44" />
+          <Sidebar items={menuItens}  className="w-44" />
 
           <div className="flex-1 flex flex-col gap-5 min-w-0">
             <BalanceCard

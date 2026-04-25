@@ -6,8 +6,6 @@ import { TransferenciasContent } from "./components/transferencias-content";
 const sidebarItems = [
   { label: "Início", href: "/" },
   { label: "Transferências", href: "/transferencias", active: true },
-  { label: "Investimentos", href: "/investimentos" },
-  { label: "Outros serviços", href: "/outros-servicos" },
 ];
 
 export default function Transferencias() {

@@ -2,7 +2,10 @@ node_modules
 
 
 .next
-.storybook
+.storybook
 storybook-static
 
 skills-lock.json
+
+
+.playwright-cli
