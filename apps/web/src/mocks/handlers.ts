@@ -90,9 +90,9 @@ function groupByMonth(transactions: Transaction[]): MonthGroup[] {
     map.get(key)!.push(tx);
   }
 
-  return Array.from(map.entries()).map(([month, transactions]) => ({
+  return Array.from(map.entries()).map(([month, txs]) => ({
     month,
-    transactions,
+    transactions: txs.sort((a, b) => parseInt(b.id, 10) - parseInt(a.id, 10)),
   }));
 }
 

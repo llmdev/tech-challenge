@@ -8,7 +8,6 @@ const config: Config = {
     "../../packages/navbar/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/sidebar/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/balance-card/src/**/*.{js,ts,jsx,tsx}",
-    "../../packages/transaction-form/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/statement/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/select/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/input/src/**/*.{js,ts,jsx,tsx}",

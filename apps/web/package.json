@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@number-flow/react": "^0.6.0",
     "@repo/balance-card": "workspace:*",
     "@repo/button": "workspace:*",
     "@repo/icons": "workspace:*",
@@ -19,7 +20,6 @@
     "@repo/sidebar": "workspace:*",
     "@repo/statement": "workspace:*",
     "@repo/theme": "workspace:*",
-    "@repo/transaction-form": "workspace:*",
     "msw": "^2.13.4",
     "next": "^15.3.1",
     "react": "^19.1.0",

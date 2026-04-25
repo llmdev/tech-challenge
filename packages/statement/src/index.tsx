@@ -1,7 +1,5 @@
-import { Button } from "@repo/button";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { PencilIcon, TrashIcon } from "@repo/icons";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -49,9 +47,8 @@ function TransactionItem({
 export interface StatementProps {
   title?: string;
   items?: TransactionItemData[];
-  onEdit?: () => void;
-  onDelete?: () => void;
   className?: string;
+  description?: string;
 }
 
 const defaultItems: TransactionItemData[] = [
@@ -88,30 +85,14 @@ const defaultItems: TransactionItemData[] = [
 function Statement({
   title = "Extrato",
   items = defaultItems,
-  onEdit,
-  onDelete,
   className,
+  description
 }: StatementProps) {
   return (
     <div className={cn("bg-card rounded-2xl p-6", className)}>
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4">
         <h2 className="text-xl font-bold text-foreground">{title}</h2>
-        <div className="flex gap-2">
-          <Button
-            size="icon"
-            icon={<PencilIcon className="w-4 h-4" />}
-            onClick={onEdit}
-            className="rounded-full w-9 h-9"
-            aria-label="Editar"
-          />
-          <Button
-            size="icon"
-            icon={<TrashIcon className="w-4 h-4" />}
-            onClick={onDelete}
-            className="rounded-full w-9 h-9"
-            aria-label="Excluir"
-          />
-        </div>
+        <span className="text-sm font-tiny text-foreground">{description}</span>
       </div>
 
       <div>

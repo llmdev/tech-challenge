@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BalanceCard } from "@repo/balance-card";
-import { TransactionForm } from "@repo/transaction-form";
+import { TransactionForm } from "@/app/components/transaction-form";
 
 const PT_DAYS = [
   "Domingo",
@@ -21,15 +21,30 @@ function todayLabel(): string {
   return `${PT_DAYS[d.getDay()]}, ${dd}/${mm}/${d.getFullYear()}`;
 }
 
+function parseBalance(balanceStr: string): number {
+  return parseFloat(
+    balanceStr.replace("R$", "").trim().replace(/\./g, "").replace(",", ".")
+  );
+}
+
 export function HomeContent() {
-  const [balance, setBalance] = useState("R$ ••••••");
+  const [balanceValue, setBalanceValue] = useState(0);
   const [balanceVisible, setBalanceVisible] = useState(true);
 
-  useEffect(() => {
-    fetch("/api/saldo")
-      .then((res) => res.json())
-      .then((data: { balance: string }) => setBalance(data.balance));
+  const fetchBalance = useCallback(async () => {
+    const res = await fetch("/api/saldo");
+    const data: { balance: string } = await res.json();
+    setBalanceValue(parseBalance(data.balance));
   }, []);
+
+  useEffect(() => {
+    fetchBalance();
+  }, [fetchBalance]);
+
+  function handleTransactionSuccess() {
+    fetchBalance();
+    window.dispatchEvent(new CustomEvent("transactionCreated"));
+  }
 
   return (
     <>
@@ -37,11 +52,11 @@ export function HomeContent() {
         userName="Joana"
         date={todayLabel()}
         accountType="Conta Corrente"
-        balance={balance}
+        balanceValue={balanceValue}
         balanceVisible={balanceVisible}
         onToggleVisibility={() => setBalanceVisible((v) => !v)}
       />
-      <TransactionForm />
+      <TransactionForm onSuccess={handleTransactionSuccess} />
     </>
   );
 }

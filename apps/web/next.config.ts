@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
     "@repo/select",
     "@repo/sidebar",
     "@repo/balance-card",
-    "@repo/transaction-form",
     "@repo/statement",
   ],
 };

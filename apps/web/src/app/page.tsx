@@ -1,8 +1,8 @@
 import { Navbar } from "@repo/navbar";
 import { Sidebar } from "@repo/sidebar";
-import { Statement } from "@repo/statement";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { HomeContent } from "./components/home-content";
+import { StatementContent } from "./components/statement-content";
 
 const menuItens = [
   { label: "Início", href: "/", active: true },
@@ -25,7 +25,7 @@ export default function Home() {
             <HomeContent />
           </div>
 
-          <Statement className="w-60 flex-shrink-0" />
+          <StatementContent className="w-60 flex-shrink-0" />
         </div>
       </main>
     </div>

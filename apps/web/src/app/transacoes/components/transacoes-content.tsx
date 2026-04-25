@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import NumberFlow from "@number-flow/react";
 import { Button } from "@repo/button";
 import { Input } from "@repo/input";
 import { EyeIcon, PencilIcon, TrashIcon, SearchIcon, PlusIcon, ChevronUpIcon, ChevronDownIcon } from "@repo/icons";
@@ -52,15 +53,10 @@ function parseAmount(amount: string): number {
   return sign * (Number.isNaN(num) ? 0 : num);
 }
 
-function calculateBalance(groups: MonthGroup[]): string {
-  const total = groups
+function calculateBalance(groups: MonthGroup[]): number {
+  return groups
     .flatMap((g) => g.transactions)
     .reduce((acc, tx) => acc + parseAmount(tx.amount), 0);
-  const formatted = Math.abs(total).toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  return total < 0 ? `- R$ ${formatted}` : `R$ ${formatted}`;
 }
 
 export function TransacoesContent() {
@@ -103,7 +99,7 @@ export function TransacoesContent() {
   const searchedGroups = applySearch(allGroups, search);
   const filteredGroups = applyFilter(searchedGroups, filter);
   const count = totalTransactions(filteredGroups);
-  const balance = calculateBalance(filteredGroups);
+  const balanceValue = calculateBalance(filteredGroups);
 
   return (
     <>
@@ -164,7 +160,7 @@ export function TransacoesContent() {
       <TransacoesList
         groups={filteredGroups}
         loading={loading}
-        balance={balance}
+        balanceValue={balanceValue}
         filter={filter}
         onEdit={openEdit}
         onDelete={handleDelete}
@@ -182,19 +178,19 @@ const BALANCE_LABEL: Record<Filter, string> = {
 function TransacoesList({
   groups,
   loading,
-  balance,
+  balanceValue,
   filter,
   onEdit,
   onDelete,
 }: {
   groups: MonthGroup[];
   loading: boolean;
-  balance: string;
+  balanceValue: number;
   filter: Filter;
   onEdit: (tx: Transaction) => void;
   onDelete: (id: string) => void;
 }) {
-  const isNegative = balance.includes("-");
+  const isNegative = balanceValue < 0;
   const colorClass = loading ? "text-muted-foreground" : isNegative ? "text-destructive" : "text-accent";
 
   const balanceRow = (
@@ -219,7 +215,13 @@ function TransacoesList({
           {BALANCE_LABEL[filter]}
         </p>
         <p className={`text-2xl font-bold tracking-tight tabular-nums ${colorClass}`}>
-          {loading ? "—" : balance}
+          {loading ? "—" : (
+            <NumberFlow
+              value={balanceValue}
+              locales="pt-BR"
+              format={{ style: "currency", currency: "BRL" }}
+            />
+          )}
         </p>
       </div>
 

@@ -1,6 +1,9 @@
+"use client";
+
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { EyeIcon, EyeOffIcon } from "@repo/icons";
+import NumberFlow from "@number-flow/react";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -11,6 +14,7 @@ export interface BalanceCardProps {
   date?: string;
   accountType?: string;
   balance?: string;
+  balanceValue?: number;
   balanceVisible?: boolean;
   onToggleVisibility?: () => void;
   className?: string;
@@ -21,6 +25,7 @@ function BalanceCard({
   date = "Quinta-feira, 08/09/2024",
   accountType = "Conta Corrente",
   balance = "R$ 2.500,00",
+  balanceValue,
   balanceVisible = true,
   onToggleVisibility,
   className,
@@ -53,7 +58,19 @@ function BalanceCard({
       <div className="border-b border-red-400/60 mb-3" />
       <p className="text-xs text-primary-foreground/60 mb-1">{accountType}</p>
       <p className="text-4xl font-light tracking-wide">
-        {balanceVisible ? balance : "R$ ••••••"}
+        {balanceVisible ? (
+          balanceValue !== undefined ? (
+            <NumberFlow
+              value={balanceValue}
+              locales="pt-BR"
+              format={{ style: "currency", currency: "BRL" }}
+            />
+          ) : (
+            balance
+          )
+        ) : (
+          "R$ ••••••"
+        )}
       </p>
     </div>
   );
