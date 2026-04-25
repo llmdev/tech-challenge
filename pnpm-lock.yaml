@@ -175,6 +175,9 @@ importers:
 
   packages/balance-card:
     dependencies:
+      '@number-flow/react':
+        specifier: ^0.6.0
+        version: 0.6.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@repo/icons':
         specifier: workspace:*
         version: link:../icons
