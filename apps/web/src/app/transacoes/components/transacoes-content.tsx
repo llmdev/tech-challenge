@@ -111,21 +111,22 @@ export function TransacoesContent() {
       />
 
       {/* Cabeçalho e filtros */}
-      <div className="bg-card rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-5">
+      <div className="bg-card rounded-2xl p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-5 gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Transações</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Transações</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
               {loading ? "Carregando..." : `${count} transações encontradas`}
             </p>
           </div>
-          <Button icon={<PlusIcon className="w-4 h-4" />} onClick={openCreate}>
-            Nova transaçao
+          <Button size="sm" icon={<PlusIcon className="w-4 h-4" />} onClick={openCreate} className="flex-shrink-0">
+            <span className="hidden sm:inline">Nova transação</span>
+            <span className="sm:hidden sr-only">Nova</span>
           </Button>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 max-w-xs">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 sm:max-w-xs">
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
             <Input
               value={search}
@@ -137,13 +138,13 @@ export function TransacoesContent() {
             />
           </div>
 
-          <div className="flex gap-1 p-1 bg-muted rounded-lg">
+          <div className="flex gap-1 p-1 bg-muted rounded-lg self-start">
             {(["all", "credit", "debit"] as Filter[]).map((f) => (
               <button
                 key={f}
                 type="button"
                 onClick={() => setFilter(f)}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   filter === f
                     ? "bg-card text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
@@ -281,10 +282,10 @@ function TransacoesList({
             {group.transactions.map((tx: Transaction) => (
               <div
                 key={tx.id}
-                className="flex items-center gap-4 py-3 px-3 rounded-xl hover:bg-muted/50 transition-colors group border-b border-border/60 last:border-b-0"
+                className="flex items-center gap-2 sm:gap-4 py-3 px-2 sm:px-3 rounded-xl hover:bg-muted/50 transition-colors group border-b border-border/60 last:border-b-0"
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-base font-semibold select-none ${
+                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0 text-base font-semibold select-none ${
                     tx.type === "credit"
                       ? "bg-accent/15 text-accent"
                       : "bg-destructive/10 text-destructive"
@@ -294,7 +295,7 @@ function TransacoesList({
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground leading-tight">
+                  <p className="text-sm font-medium text-foreground leading-tight truncate">
                     {tx.description}
                   </p>
                   <p className="text-xs text-muted-foreground truncate mt-0.5">
@@ -302,25 +303,25 @@ function TransacoesList({
                   </p>
                 </div>
 
-                <span className="text-xs text-muted-foreground w-24 text-right flex-shrink-0">
+                <span className="hidden sm:block text-xs text-muted-foreground w-24 text-right flex-shrink-0">
                   {tx.date}
                 </span>
 
                 <span
-                  className={`text-sm font-semibold w-32 text-right flex-shrink-0 ${
+                  className={`text-sm font-semibold text-right flex-shrink-0 ${
                     tx.type === "credit" ? "text-accent" : "text-destructive"
                   }`}
                 >
                   {tx.amount}
                 </span>
 
-                <div className="flex gap-0.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-0.5 flex-shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <Button
                     size="icon"
                     variant="ghost"
                     icon={<EyeIcon className="w-4 h-4" />}
                     aria-label="Ver detalhes"
-                    className="w-8 h-8 rounded-full"
+                    className="w-8 h-8 rounded-full hidden sm:inline-flex"
                   />
                   <Button
                     size="icon"

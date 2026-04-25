@@ -17,15 +17,15 @@ export default function Home() {
         actions={<ThemeToggle />}
       />
 
-      <main className="flex-1 p-6">
-        <div className="max-w-5xl mx-auto flex gap-5 h-full">
-          <Sidebar items={menuItens} className="w-44" />
+      <main className="flex-1 p-4 sm:p-6 pb-24 lg:pb-6">
+        <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-5">
+          <Sidebar items={menuItens} className="hidden lg:block w-44 self-start sticky top-6" />
 
           <div className="flex-1 flex flex-col gap-5 min-w-0">
             <HomeContent />
           </div>
 
-          <StatementContent className="w-60 flex-shrink-0" />
+          <StatementContent className="lg:w-60 lg:flex-shrink-0" />
         </div>
       </main>
     </div>

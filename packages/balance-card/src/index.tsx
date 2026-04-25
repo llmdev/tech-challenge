@@ -33,12 +33,12 @@ function BalanceCard({
   return (
     <div
       className={cn(
-        "bg-primary text-primary-foreground rounded-2xl px-8 pt-8 pb-12",
+        "bg-primary text-primary-foreground rounded-2xl px-6 pt-6 pb-8 sm:px-8 sm:pt-8 sm:pb-12",
         className
       )}
     >
       <h1 className="text-2xl font-bold mb-1">Olá, {userName}! :)</h1>
-      <p className="text-sm text-primary-foreground/60 mb-10">{date}</p>
+      <p className="text-sm text-primary-foreground/60 mb-6 sm:mb-10">{date}</p>
 
       <div className="flex items-center gap-2 mb-1">
         <span className="text-sm font-semibold tracking-wide">Saldo</span>

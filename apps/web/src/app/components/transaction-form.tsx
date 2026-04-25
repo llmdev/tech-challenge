@@ -205,7 +205,7 @@ export function TransactionForm({
       </div>
 
       {/* Secondary fields — 2-column grid */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Input
           label="Descrição"
           value={form.description}
