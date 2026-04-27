@@ -46,6 +46,10 @@ function formatAmount(raw: string, tipo: "credit" | "debit"): string {
   return `${tipo === "credit" ? "+" : "-"} R$ ${formatted}`;
 }
 
+function onlyNumbers(raw: string): string {
+  return raw.replace(/[^0-9,]/g, "");
+}
+
 interface FormState {
   tipo: "credit" | "debit";
   category: string;
@@ -186,7 +190,7 @@ export function TransactionForm({
             type="text"
             inputMode="decimal"
             value={form.valor}
-            onChange={(e) => set("valor", e.target.value)}
+            onChange={(e) => set("valor", onlyNumbers(e.target.value))}
             placeholder="0,00"
             required={true}
             className={cn(
