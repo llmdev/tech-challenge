@@ -1,0 +1,343 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Design System/Introdução" />
+
+<div className="sb-container" style={{ maxWidth: 860, margin: "0 auto", padding: "48px 24px", fontFamily: "inherit" }}>
+
+<div style={{ marginBottom: 48 }}>
+  <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
+    <div style={{ width: 48, height: 48, borderRadius: 12, background: "hsl(193 52% 27%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="8" height="8" rx="2" fill="white" fillOpacity="0.9"/>
+        <rect x="13" y="3" width="8" height="8" rx="2" fill="white" fillOpacity="0.6"/>
+        <rect x="3" y="13" width="8" height="8" rx="2" fill="white" fillOpacity="0.6"/>
+        <rect x="13" y="13" width="8" height="8" rx="2" fill="white" fillOpacity="0.9"/>
+      </svg>
+    </div>
+    <div>
+      <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: "hsl(193 40% 18%)", lineHeight: 1.2 }}>Tech Challenge Design System</h1>
+      <p style={{ margin: 0, fontSize: 14, color: "hsl(150 5% 45%)", marginTop: 4 }}>v1.0 · Componentes React + Tailwind CSS</p>
+    </div>
+  </div>
+
+  <p style={{ fontSize: 17, lineHeight: 1.7, color: "hsl(193 40% 18%)", margin: 0, maxWidth: 680 }}>
+    Uma biblioteca de componentes compartilhada, construída para ser <strong>consistente</strong>, <strong>acessível</strong> e <strong>fácil de usar</strong> em toda a plataforma. Este Storybook é a fonte de verdade para interfaces — onde design e código se encontram.
+  </p>
+</div>
+
+---
+
+## Filosofia
+
+O Design System parte de três princípios centrais que guiam cada decisão de componente, token e API:
+
+<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, margin: "32px 0" }}>
+
+<div style={{ padding: 24, borderRadius: 12, border: "1px solid hsl(150 15% 83%)", background: "hsl(0 0% 100%)" }}>
+  <div style={{ width: 40, height: 40, borderRadius: 10, background: "hsl(193 52% 27% / 0.1)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="hsl(193 52% 27%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 12h4M18 12h4M12 2v4M12 18v4"/>
+      <circle cx="12" cy="12" r="4"/>
+      <path d="m6.3 6.3 2.8 2.8M14.9 14.9l2.8 2.8M14.9 9.1l2.8-2.8M6.3 17.7l2.8-2.8"/>
+    </svg>
+  </div>
+  <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Composição sobre configuração</h3>
+  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "hsl(150 5% 45%)" }}>
+    Componentes pequenos e focados se combinam para formar interfaces complexas. Cada peça faz bem uma coisa — sem lógica escondida, sem comportamentos surpresa.
+  </p>
+</div>
+
+<div style={{ padding: 24, borderRadius: 12, border: "1px solid hsl(150 15% 83%)", background: "hsl(0 0% 100%)" }}>
+  <div style={{ width: 40, height: 40, borderRadius: 10, background: "hsl(193 52% 27% / 0.1)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="hsl(193 52% 27%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="13.5" cy="6.5" r="2.5"/>
+      <circle cx="17.5" cy="10.5" r="2.5"/>
+      <circle cx="8.5" cy="7.5" r="2.5"/>
+      <circle cx="6.5" cy="12.5" r="2.5"/>
+      <path d="M12 22a7 7 0 0 0 7-7c0-2.38-1.19-4.47-3-5.74V4a2 2 0 0 0-4 0v5.26A7 7 0 0 0 5 15a7 7 0 0 0 7 7z"/>
+    </svg>
+  </div>
+  <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Tokens como linguagem comum</h3>
+  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "hsl(150 5% 45%)" }}>
+    Cor, espaçamento e tipografia vivem em variáveis semânticas — <code style={{ background: "hsl(150 12% 82%)", padding: "1px 6px", borderRadius: 4, fontSize: 13 }}>bg-primary</code>, <code style={{ background: "hsl(150 12% 82%)", padding: "1px 6px", borderRadius: 4, fontSize: 13 }}>text-muted-foreground</code> — não em valores hardcoded. Dark mode e temas futuros são consequência natural.
+  </p>
+</div>
+
+<div style={{ padding: 24, borderRadius: 12, border: "1px solid hsl(150 15% 83%)", background: "hsl(0 0% 100%)" }}>
+  <div style={{ width: 40, height: 40, borderRadius: 10, background: "hsl(193 52% 27% / 0.1)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="hsl(193 52% 27%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 8v4M12 16h.01"/>
+      <path d="M8 12h8"/>
+    </svg>
+  </div>
+  <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Acessibilidade por padrão</h3>
+  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "hsl(150 5% 45%)" }}>
+    Primitivos do Radix UI garantem navegação por teclado e semântica correta sem esforço adicional. Acessibilidade não é checklist — é ponto de partida.
+  </p>
+</div>
+
+</div>
+
+---
+
+## Estrutura do monorepo
+
+```
+packages/
+  @repo/button       → Botão com variantes, tamanhos e suporte a ícones
+  @repo/input        → Campo de texto com label e estado de erro
+  @repo/select       → Seletor acessível baseado em Radix UI
+  @repo/navbar       → Barra de navegação superior
+  @repo/sidebar      → Navegação lateral responsiva
+  @repo/balance-card → Card de saldo para contexto financeiro
+  @repo/statement    → Linha de extrato com tipo, valor e data
+  @repo/icons        → Ícones SVG via factory createIcon
+  @repo/theme        → Plugin Tailwind com tokens de cor e modo escuro
+
+apps/
+  web                → App Next.js 15 (consumidor principal)
+  storybook          → Este Storybook (documentação viva)
+```
+
+Cada pacote exporta diretamente o source `.tsx` — sem etapa de build. O transpile acontece no consumidor (`next.config.ts` ou Vite).
+
+---
+
+## Tokens de tema
+
+O tema é construído sobre variáveis CSS HSL injetadas pelo `defaultThemePlugin` do Tailwind. As classes semânticas mapeiam sempre para esses tokens:
+
+<div style={{ overflowX: "auto", margin: "24px 0" }}>
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+  <thead>
+    <tr style={{ borderBottom: "2px solid hsl(150 15% 83%)" }}>
+      <th style={{ textAlign: "left", padding: "8px 12px", color: "hsl(150 5% 45%)", fontWeight: 600 }}>Token</th>
+      <th style={{ textAlign: "left", padding: "8px 12px", color: "hsl(150 5% 45%)", fontWeight: 600 }}>Classe Tailwind</th>
+      <th style={{ textAlign: "left", padding: "8px 12px", color: "hsl(150 5% 45%)", fontWeight: 600 }}>Uso</th>
+    </tr>
+  </thead>
+  <tbody>
+    {[
+      ["--background", "bg-background", "Fundo da página / superfície base"],
+      ["--foreground", "text-foreground", "Texto principal"],
+      ["--primary", "bg-primary / text-primary", "Ações primárias, CTAs"],
+      ["--secondary", "bg-secondary", "Ações secundárias, chips"],
+      ["--accent", "bg-accent", "Destaques, badges de sucesso"],
+      ["--muted", "bg-muted / text-muted-foreground", "Texto de apoio, placeholders"],
+      ["--destructive", "bg-destructive", "Erros, exclusões"],
+      ["--border", "border-border", "Bordas e divisores"],
+      ["--card", "bg-card", "Superfícies elevadas (cards, modais)"],
+    ].map(([token, cls, uso]) => (
+      <tr key={token} style={{ borderBottom: "1px solid hsl(150 15% 83%)" }}>
+        <td style={{ padding: "10px 12px" }}><code style={{ background: "hsl(150 12% 82%)", padding: "2px 6px", borderRadius: 4 }}>{token}</code></td>
+        <td style={{ padding: "10px 12px" }}><code style={{ background: "hsl(150 12% 82%)", padding: "2px 6px", borderRadius: 4 }}>{cls}</code></td>
+        <td style={{ padding: "10px 12px", color: "hsl(150 5% 45%)" }}>{uso}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+> **Regra de ouro:** nunca use valores hex, hsl fixos ou variáveis CSS raw diretamente em componentes. Sempre passe pela classe Tailwind semântica.
+
+---
+
+## Como contribuir
+
+O Design System cresce por contribuições incrementais. Cada PR deve ser atômica: um componente, uma correção ou um token — não os três juntos.
+
+### Configuração inicial
+
+```bash
+git clone <repo>
+pnpm install          # instala todas as dependências do monorepo
+pnpm dev              # sobe web (localhost:3000) + storybook (localhost:6006) em paralelo
+```
+
+---
+
+### Adicionando um novo componente
+
+Siga as etapas na ordem — cada uma tem um critério de saída claro.
+
+<div style={{ display: "flex", flexDirection: "column", gap: 0, margin: "28px 0" }}>
+
+<div style={{ display: "flex", gap: 16, padding: "20px 0", borderBottom: "1px solid hsl(150 15% 83%)" }}>
+  <div style={{ flexShrink: 0, width: 32, height: 32, borderRadius: "50%", background: "hsl(193 52% 27%)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 14 }}>1</div>
+  <div>
+    <h4 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Crie a estrutura do pacote</h4>
+    <p style={{ margin: "0 0 10px", fontSize: 14, lineHeight: 1.6, color: "hsl(150 5% 45%)" }}>Um diretório em <code style={{ background: "hsl(150 12% 82%)", padding: "1px 5px", borderRadius: 4 }}>packages/@repo/nome-do-componente/</code> com dois arquivos:</p>
+    <pre style={{ margin: 0, background: "hsl(150 12% 82%)", borderRadius: 8, padding: "14px 16px", fontSize: 13, overflowX: "auto" }}><code>{`packages/@repo/meu-componente/
+  src/
+    index.tsx      ← toda a lógica aqui, sem subpastas
+  package.json`}</code></pre>
+  </div>
+</div>
+
+<div style={{ display: "flex", gap: 16, padding: "20px 0", borderBottom: "1px solid hsl(150 15% 83%)" }}>
+  <div style={{ flexShrink: 0, width: 32, height: 32, borderRadius: "50%", background: "hsl(193 52% 27%)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 14 }}>2</div>
+  <div>
+    <h4 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Implemente seguindo as convenções</h4>
+    <p style={{ margin: "0 0 10px", fontSize: 14, lineHeight: 1.6, color: "hsl(150 5% 45%)" }}>Template mínimo para um componente que mapeia para um elemento HTML:</p>
+    <pre style={{ margin: 0, background: "hsl(150 12% 82%)", borderRadius: 8, padding: "14px 16px", fontSize: 13, overflowX: "auto" }}><code>{`import React from "react";
+import { cn } from "@repo/utils";
+
+interface MeuComponenteProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "outline";
+}
+
+export const MeuComponente = React.forwardRef<HTMLDivElement, MeuComponenteProps>(
+  ({ className, variant = "default", ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "base-classes-aqui",
+          variant === "outline" && "outline-classes",
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+
+MeuComponente.displayName = "MeuComponente";`}</code></pre>
+  </div>
+</div>
+
+<div style={{ display: "flex", gap: 16, padding: "20px 0", borderBottom: "1px solid hsl(150 15% 83%)" }}>
+  <div style={{ flexShrink: 0, width: 32, height: 32, borderRadius: "50%", background: "hsl(193 52% 27%)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 14 }}>3</div>
+  <div>
+    <h4 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Configure o <code style={{ background: "hsl(150 12% 82%)", padding: "1px 5px", borderRadius: 4, fontWeight: 400 }}>package.json</code></h4>
+    <p style={{ margin: "0 0 10px", fontSize: 14, lineHeight: 1.6, color: "hsl(150 5% 45%)" }}>Copie o padrão dos pacotes existentes — o campo <code style={{ background: "hsl(150 12% 82%)", padding: "1px 5px", borderRadius: 4 }}>exports</code> aponta para o source diretamente:</p>
+    <pre style={{ margin: 0, background: "hsl(150 12% 82%)", borderRadius: 8, padding: "14px 16px", fontSize: 13, overflowX: "auto" }}><code>{`{
+  "name": "@repo/meu-componente",
+  "version": "0.0.1",
+  "main": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx"
+  }
+}`}</code></pre>
+  </div>
+</div>
+
+<div style={{ display: "flex", gap: 16, padding: "20px 0", borderBottom: "1px solid hsl(150 15% 83%)" }}>
+  <div style={{ flexShrink: 0, width: 32, height: 32, borderRadius: "50%", background: "hsl(193 52% 27%)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 14 }}>4</div>
+  <div>
+    <h4 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Registre nos consumidores</h4>
+    <p style={{ margin: "0 0 10px", fontSize: 14, lineHeight: 1.6, color: "hsl(150 5% 45%)" }}>Adicione o pacote em <code style={{ background: "hsl(150 12% 82%)", padding: "1px 5px", borderRadius: 4 }}>transpilePackages</code> do <code style={{ background: "hsl(150 12% 82%)", padding: "1px 5px", borderRadius: 4 }}>apps/web/next.config.ts</code> e declare como dependência nos <code style={{ background: "hsl(150 12% 82%)", padding: "1px 5px", borderRadius: 4 }}>package.json</code> dos apps que vão consumi-lo:</p>
+    <pre style={{ margin: 0, background: "hsl(150 12% 82%)", borderRadius: 8, padding: "14px 16px", fontSize: 13, overflowX: "auto" }}><code>{`// next.config.ts
+transpilePackages: [
+  "@repo/button",
+  "@repo/meu-componente", // ← adicione aqui
+]`}</code></pre>
+  </div>
+</div>
+
+<div style={{ display: "flex", gap: 16, padding: "20px 0" }}>
+  <div style={{ flexShrink: 0, width: 32, height: 32, borderRadius: "50%", background: "hsl(193 52% 27%)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 14 }}>5</div>
+  <div>
+    <h4 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Escreva a story</h4>
+    <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "hsl(150 5% 45%)" }}>Crie <code style={{ background: "hsl(150 12% 82%)", padding: "1px 5px", borderRadius: 4 }}>apps/storybook/src/stories/MeuComponente.stories.tsx</code>. A story é a especificação visual do componente — veja a seção abaixo sobre o que ela deve cobrir.</p>
+  </div>
+</div>
+
+</div>
+
+---
+
+### O que uma boa story cobre
+
+<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, margin: "24px 0" }}>
+
+<div style={{ padding: 20, borderRadius: 10, border: "1px solid hsl(150 15% 83%)", background: "hsl(0 0% 100%)" }}>
+  <h4 style={{ margin: "0 0 10px", fontSize: 14, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Obrigatório</h4>
+  <ul style={{ margin: 0, padding: "0 0 0 18px", fontSize: 14, lineHeight: 1.8, color: "hsl(150 5% 45%)" }}>
+    <li>Uma story por variante ou prop relevante</li>
+    <li>Story <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>Default</code> sempre presente</li>
+    <li>Estado <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>disabled</code> quando aplicável</li>
+    <li>Story <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>AllVariants</code> com render manual para visão geral</li>
+    <li><code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>tags: ["autodocs"]</code> no meta</li>
+  </ul>
+</div>
+
+<div style={{ padding: 20, borderRadius: 10, border: "1px solid hsl(150 15% 83%)", background: "hsl(0 0% 100%)" }}>
+  <h4 style={{ margin: "0 0 10px", fontSize: 14, fontWeight: 600, color: "hsl(193 40% 18%)" }}>Recomendado</h4>
+  <ul style={{ margin: 0, padding: "0 0 0 18px", fontSize: 14, lineHeight: 1.8, color: "hsl(150 5% 45%)" }}>
+    <li>Descrição do componente em <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>parameters.docs</code></li>
+    <li><code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>argTypes</code> com descrição de cada prop</li>
+    <li>JSDoc nas stories que ilustram comportamentos não óbvios</li>
+    <li>Casos extremos: texto longo, sem conteúdo, overflow</li>
+  </ul>
+</div>
+
+</div>
+
+---
+
+### Convenções obrigatórias
+
+<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, margin: "24px 0" }}>
+
+<div style={{ padding: 20, borderRadius: 10, border: "1px solid hsl(145 63% 40% / 0.3)", background: "hsl(145 63% 40% / 0.04)" }}>
+  <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "hsl(145 50% 30%)" }}>Fazer</h4>
+  <ul style={{ margin: 0, padding: "0 0 0 18px", fontSize: 13, lineHeight: 1.9, color: "hsl(193 40% 25%)" }}>
+    <li>Usar tokens semânticos via classes Tailwind</li>
+    <li>Aceitar e mesclar <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>className</code> com <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>cn()</code></li>
+    <li>Exportar interface de props explícita</li>
+    <li><code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>React.forwardRef</code> em elementos DOM</li>
+    <li>CVA para múltiplas variantes visuais</li>
+    <li>Ícones via <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>createIcon</code> em <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>@repo/icons</code></li>
+  </ul>
+</div>
+
+<div style={{ padding: 20, borderRadius: 10, border: "1px solid hsl(0 72% 51% / 0.3)", background: "hsl(0 72% 51% / 0.04)" }}>
+  <h4 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "hsl(0 60% 40%)" }}>Não fazer</h4>
+  <ul style={{ margin: 0, padding: "0 0 0 18px", fontSize: 13, lineHeight: 1.9, color: "hsl(193 40% 25%)" }}>
+    <li>Valores hex, hsl fixos ou <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>style={"{{}}"}</code> para cores</li>
+    <li>CSS modules ou estilos inline</li>
+    <li>SVG inline fora de <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>@repo/icons</code></li>
+    <li><code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>any</code> ou <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>@ts-ignore</code> sem comentário explicativo</li>
+    <li>Lógica de negócio dentro do componente</li>
+    <li>Subpastas dentro de <code style={{ background: "hsl(150 12% 82%)", padding: "1px 4px", borderRadius: 3 }}>src/</code></li>
+  </ul>
+</div>
+
+</div>
+
+---
+
+### Checklist antes de abrir a PR
+
+<div style={{ margin: "24px 0", padding: 24, borderRadius: 12, border: "1px solid hsl(150 15% 83%)", background: "hsl(0 0% 100%)", fontSize: 14 }}>
+
+<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "6px 32px" }}>
+  {[
+    "Componente passa em `pnpm lint` sem erros",
+    "Story cobre todas as variantes e estados",
+    "Nenhum valor de cor hardcoded no componente",
+    "Props documentadas com `argTypes` na story",
+    "Funciona com `className` customizado sobrescrevendo estilos",
+    "`forwardRef` implementado se renderiza elemento DOM",
+    "Pacote adicionado em `transpilePackages` do Next.js",
+    "Pacote declarado como dependência nos apps consumidores",
+  ].map((item) => (
+    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "6px 0" }}>
+      <div style={{ flexShrink: 0, width: 18, height: 18, borderRadius: 4, border: "2px solid hsl(193 52% 27%)", marginTop: 1 }} />
+      <span style={{ color: "hsl(193 40% 18%)", lineHeight: 1.5 }}>{item}</span>
+    </div>
+  ))}
+</div>
+
+</div>
+
+<div style={{ marginTop: 40, padding: 24, borderRadius: 12, background: "hsl(193 52% 27%)", color: "white" }}>
+  <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600 }}>Dúvidas?</h3>
+  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, opacity: 0.85 }}>
+    Antes de criar um componente novo, verifique se algo existente pode ser composto ou extendido. Revise os pacotes em <code style={{ background: "rgba(255,255,255,0.15)", padding: "1px 6px", borderRadius: 4 }}>packages/@repo/</code> e as stories correspondentes neste Storybook — a resposta provavelmente já está aqui.
+  </p>
+</div>
+
+</div>
