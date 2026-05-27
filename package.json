@@ -4,13 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --parallel --filter=web --filter=storybook dev",
-    "build": "pnpm --filter=./packages/* build && pnpm --filter=./apps/* build",
+    "build": "pnpm --filter=./packages/* --if-present build && pnpm --filter=./apps/* --if-present build ",
     "lint": "biome lint --write .",
     "lint:check": "biome lint .",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "storybook": "pnpm --filter=storybook dev",
-    "web": "pnpm --filter=web dev"
+    "web": "pnpm --filter=web start"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.12",

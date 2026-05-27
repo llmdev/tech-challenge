@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { Input } from "@repo/input";
 import { Select } from "@repo/select";
 import { Button } from "@repo/button";
-import type { Transaction } from "@/mocks/handlers";
+import type { Transaction } from "@/app/api/_store";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

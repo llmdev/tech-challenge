@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { MockProvider } from "@/components/mock-provider";
 import { BottomNav } from "@/app/components/bottom-nav";
 
 export const metadata: Metadata = {
@@ -23,7 +22,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <MockProvider>{children}</MockProvider>
+        {children}
         <BottomNav />
       </body>
     </html>

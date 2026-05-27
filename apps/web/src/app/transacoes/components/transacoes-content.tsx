@@ -5,7 +5,7 @@ import NumberFlow from "@number-flow/react";
 import { Button } from "@repo/button";
 import { Input } from "@repo/input";
 import { EyeIcon, PencilIcon, TrashIcon, SearchIcon, PlusIcon, ChevronUpIcon, ChevronDownIcon } from "@repo/icons";
-import type { MonthGroup, Transaction } from "@/mocks/handlers";
+import type { MonthGroup, Transaction } from "@/app/api/_store";
 import { TransactionModal } from "./transaction-modal";
 
 type Filter = "all" | "credit" | "debit";

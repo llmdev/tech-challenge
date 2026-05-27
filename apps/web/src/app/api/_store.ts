@@ -1,4 +1,5 @@
-import { http, HttpResponse } from "msw";
+// Store em memória — persiste enquanto o processo do servidor estiver rodando.
+// Equivalente ao mock que era feito via MSW (com localStorage no browser).
 
 export interface Transaction {
   id: string;
@@ -7,17 +8,13 @@ export interface Transaction {
   description: string;
   institution: string;
   date: string; // "DD/MM/YYYY"
-  amount: string; // "+ R$ X,XX" or "- R$ X,XX"
+  amount: string; // "+ R$ X,XX" ou "- R$ X,XX"
 }
 
 export interface MonthGroup {
   month: string;
   transactions: Transaction[];
 }
-
-// ── Persistence ───────────────────────────────────────────────────────────────
-
-const STORAGE_KEY = "msw_transacoes";
 
 const SEED: Transaction[] = [
   { id: "1",  type: "credit", category: "receita",  description: "Depósito recebido",     institution: "Banco Inter",       date: "21/11/2024", amount: "+ R$ 1.500,00" },
@@ -32,28 +29,13 @@ const SEED: Transaction[] = [
   { id: "10", type: "debit",  category: "transf",   description: "Transferência enviada", institution: "Pedro Alves",       date: "15/09/2024", amount: "- R$ 750,00"   },
 ];
 
-function loadStore(): Transaction[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as Transaction[];
-  } catch {}
-  return [...SEED];
-}
-
-function saveStore(data: Transaction[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {}
-}
-
-// ── Mutable flat store ────────────────────────────────────────────────────────
-
-let store: Transaction[] = loadStore();
-let nextId = store.reduce((max, tx) => Math.max(max, parseInt(tx.id, 10)), 0) + 1;
+// Singleton — módulo é avaliado uma única vez por processo Node.
+let store: Transaction[] = [...SEED];
+let nextId = SEED.reduce((max, tx) => Math.max(max, parseInt(tx.id, 10)), 0) + 1;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function parseAmountValue(amount: string): number {
+export function parseAmountValue(amount: string): number {
   const sign = amount.includes("+") ? 1 : -1;
   const num = parseFloat(
     amount.replace(/[^0-9,.]/g, "").replace(/\./g, "").replace(",", ".")
@@ -77,7 +59,7 @@ function dateToSortValue(ddmmyyyy: string): number {
   return parseInt(`${parts[2]}${parts[1]}${parts[0]}`, 10);
 }
 
-function groupByMonth(transactions: Transaction[]): MonthGroup[] {
+export function groupByMonth(transactions: Transaction[]): MonthGroup[] {
   const sorted = [...transactions].sort(
     (a, b) => dateToSortValue(b.date) - dateToSortValue(a.date)
   );
@@ -96,44 +78,31 @@ function groupByMonth(transactions: Transaction[]): MonthGroup[] {
   }));
 }
 
-// ── Handlers ──────────────────────────────────────────────────────────────────
+// ── Store API ────────────────────────────────────────────────────────────────
 
-export const handlers = [
-  http.get("/api/saldo", () => {
-    const total = store.reduce((acc, tx) => acc + parseAmountValue(tx.amount), 0);
-    const formatted = total.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-    return HttpResponse.json({ balance: `R$ ${formatted}` });
-  }),
+export function getAll(): Transaction[] {
+  return store;
+}
 
-  http.get("/api/transacoes", () => {
-    return HttpResponse.json(groupByMonth(store));
-  }),
+export function findById(id: string): Transaction | undefined {
+  return store.find((tx) => tx.id === id);
+}
 
-  http.post("/api/transacoes", async ({ request }) => {
-    const body = (await request.json()) as Omit<Transaction, "id">;
-    const created: Transaction = { ...body, id: String(nextId++) };
-    store.push(created);
-    saveStore(store);
-    return HttpResponse.json(created, { status: 201 });
-  }),
+export function create(data: Omit<Transaction, "id">): Transaction {
+  const tx: Transaction = { ...data, id: String(nextId++) };
+  store.push(tx);
+  return tx;
+}
 
-  http.put("/api/transacoes/:id", async ({ request, params }) => {
-    const { id } = params as { id: string };
-    const body = (await request.json()) as Omit<Transaction, "id">;
-    const idx = store.findIndex((tx) => tx.id === id);
-    if (idx === -1) return new HttpResponse(null, { status: 404 });
-    store[idx] = { ...body, id };
-    saveStore(store);
-    return HttpResponse.json(store[idx]);
-  }),
+export function update(id: string, data: Omit<Transaction, "id">): Transaction | null {
+  const idx = store.findIndex((tx) => tx.id === id);
+  if (idx === -1) return null;
+  store[idx] = { ...data, id };
+  return store[idx];
+}
 
-  http.delete("/api/transacoes/:id", ({ params }) => {
-    const { id } = params as { id: string };
-    store = store.filter((tx) => tx.id !== id);
-    saveStore(store);
-    return new HttpResponse(null, { status: 204 });
-  }),
-];
+export function remove(id: string): boolean {
+  const before = store.length;
+  store = store.filter((tx) => tx.id !== id);
+  return store.length < before;
+}
