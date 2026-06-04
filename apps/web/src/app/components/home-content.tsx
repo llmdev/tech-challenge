@@ -27,7 +27,7 @@ function parseBalance(balanceStr: string): number {
   );
 }
 
-export function HomeContent() {
+export function HomeContent({ userName }: { userName: string }) {
   const [balanceValue, setBalanceValue] = useState(0);
   const [balanceVisible, setBalanceVisible] = useState(true);
 
@@ -49,7 +49,7 @@ export function HomeContent() {
   return (
     <>
       <BalanceCard
-        userName="Joana"
+        userName={userName}
         date={todayLabel()}
         accountType="Conta Corrente"
         balanceValue={balanceValue}
