@@ -21,7 +21,7 @@ export function LogoutButton() {
     <button
       onClick={handleLogout}
       aria-label="Sair da conta"
-      className="text-xs font-medium text-primary-foreground/70 hover:text-primary-foreground transition-colors px-2 py-1 rounded hover:bg-primary-foreground/10"
+      className="block py-3 px-2 text-sm font-medium transition-colors"
     >
       Sair
     </button>

@@ -7,17 +7,24 @@ import { BottomNav } from "@/app/components/bottom-nav";
 import { StatementContent } from "@/app/components/statement-content";
 import { auth } from "@/lib/auth";
 
-const menuItems = [
-  { label: "Início", href: "/", active: true },
-  { label: "Transações", href: "/transacoes" },
-];
+function buildMenuItems(pathname: string) {
+  return [
+    { label: "Início", href: "/", active: pathname === "/" },
+    { label: "Transações", href: "/transacoes", active: pathname.startsWith("/transacoes") },
+    { label: "", component: <LogoutButton /> },
+  ];
+}
 
 export default async function AppLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") ?? "/";
+  const menuItems = buildMenuItems(pathname);
+
+  const session = await auth.api.getSession({ headers: headersList });
   const userName = session?.user?.name ?? "Usuário";
 
   return (
@@ -26,7 +33,6 @@ export default async function AppLayout({
         userName={userName}
         actions={
           <div className="flex items-center gap-1">
-            <LogoutButton />
             <ThemeToggle />
           </div>
         }

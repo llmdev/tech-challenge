@@ -9,11 +9,13 @@ export interface SidebarItem {
   label: string;
   href?: string;
   active?: boolean;
+  component?: React.ReactNode
 }
 
 export interface SidebarProps {
   items?: SidebarItem[];
   className?: string;
+
 }
 
 const defaultItems: SidebarItem[] = [
@@ -22,6 +24,7 @@ const defaultItems: SidebarItem[] = [
 ];
 
 function Sidebar({ items = defaultItems, className }: SidebarProps) {
+
   return (
     <nav
       className={cn(
@@ -32,6 +35,7 @@ function Sidebar({ items = defaultItems, className }: SidebarProps) {
       <ul className="space-y-0">
         {items.map((item) => (
           <li key={item.label} className="border-b border-border last:border-b-0">
+            {item.component ?? item.component}
             <a
               href={item.href ?? "#"}
               className={cn(
