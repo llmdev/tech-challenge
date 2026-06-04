@@ -5,6 +5,9 @@ node_modules
 .storybook
 storybook-static
 
+# better-auth SQLite database
+apps/web/auth.db
+
 skills-lock.json
 
 
