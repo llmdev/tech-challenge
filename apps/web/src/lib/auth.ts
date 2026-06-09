@@ -1,12 +1,10 @@
 import { betterAuth } from "better-auth";
-import path from "node:path";
-
-// biome-ignore lint/suspicious/noExplicitAny: Usando require para evitar TS4023 com o tipo de namespace BetterSqlite3.Database
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const Database = require("better-sqlite3");
+import { Pool } from "pg";
 
 export const auth = betterAuth({
-  database: new Database(path.join(process.cwd(), "auth.db")),
+  database: new Pool({
+    connectionString: process.env.DATABASE_URL,
+  }),
   emailAndPassword: {
     enabled: true,
   },
