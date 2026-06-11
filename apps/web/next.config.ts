@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   // Impede o webpack de tentar fazer bundle de módulos nativos do servidor (better-auth + deps)
@@ -20,6 +21,15 @@ const nextConfig: NextConfig = {
     "@repo/balance-card",
     "@repo/statement",
   ],
+  webpack(config) {
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@': path.resolve(__dirname, 'src'),
+      '@repo': path.resolve(__dirname, '..', '..', 'packages'),
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

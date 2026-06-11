@@ -155,3 +155,47 @@ Stories em `apps/storybook/src/stories/`. Todo componente novo em `packages/` re
 ```bash
 pnpm storybook   # localhost:6006
 ```
+
+## Microfrontends (Shell + MFE)
+
+Este repositório inclui um shell simples e um microfrontend de demonstração (`apps/mfe-next`). As instruções abaixo explicam como rodar o MFE dentro do shell no seu ambiente local — usamos uma abordagem de demo que carrega o bundle do MFE a partir do mesmo host do shell para evitar problemas de CORS em desenvolvimento.
+
+Recomendado (mesma origem, mais simples):
+
+1. Build do MFE:
+
+```bash
+node apps/mfe-next/build.js
+```
+
+2. Copiar o bundle para o shell (script `deploy` já disponível):
+
+```bash
+node apps/mfe-next/deploy-to-shell.js
+# ou: pnpm --filter mfe-next deploy
+```
+
+3. Servir o shell (serve arquivos estáticos):
+
+```bash
+npx serve -s apps/shell -l 9000
+```
+
+4. Abra `http://localhost:9000` e clique em "MFE Next (stub)".
+
+Alternativa (CORS remoto):
+
+- Se preferir servir o MFE em outro servidor/porta (ex.: `http://localhost:9002`), inicie o servidor CORS incluído em `apps/mfe-next/cors-server.js` que adiciona o header `Access-Control-Allow-Origin: *`:
+
+```bash
+node apps/mfe-next/cors-server.js
+# ou: pnpm --filter mfe-next start:cors
+```
+
+- Nesse caso, ajuste o import map em `apps/shell/index.html` para apontar `mfe-next` para `http://localhost:9002/mfe-next.js` (ou edite dinamicamente `apps/shell/index.html`).
+
+Notas:
+- O repositório contém um utilitário `apps/mfe-next/deploy-to-shell.js` que copia automaticamente `dist/mfe-next.js` para `apps/shell/vendor/mfe-next.js` — isso evita CORS durante desenvolvimento.
+- Para desenvolvimento contínuo, execute `node apps/mfe-next/build.js --watch` em um terminal e `node apps/mfe-next/cors-server.js` ou sirva o shell conforme preferir.
+- O shell usa um shim local (`apps/shell/vendor/single-spa-shim.js`) para demonstração; em produção substitua pelo `single-spa` oficial e ajuste o carregamento conforme necessário.
+

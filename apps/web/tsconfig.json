@@ -8,6 +8,8 @@
         "name": "next"
       }
     ],
+    "moduleResolution": "node",
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
