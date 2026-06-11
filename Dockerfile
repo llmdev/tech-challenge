@@ -7,6 +7,8 @@ COPY . .
 
 RUN pnpm install --frozen-lockfile --force
 
+RUN pnpm build
+
 EXPOSE 3000
 
 CMD ["pnpm", "web"]
