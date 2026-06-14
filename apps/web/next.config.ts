@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Impede o webpack de tentar fazer bundle de módulos nativos do servidor (better-auth + deps)
   serverExternalPackages: [
     "better-auth",
     "better-sqlite3",
