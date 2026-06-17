@@ -15,14 +15,13 @@ function walk(dir, fileList = []) {
 }
 
 const root = process.cwd();
-const configs = [path.join(root, 'tsconfig.base.json')];
-configs.push(...walk(root));
+const configs = walk(root);
 
 console.log('Running tsc --noEmit for', configs.length, 'configs');
 let failed = false;
 for (const cfg of configs) {
   console.log('\n==== tsc -p', cfg, '====');
-  const res = spawnSync('pnpm', ['exec', 'tsc', '-p', cfg, '--noEmit'], { stdio: 'inherit' });
+  const res = spawnSync('pnpm', ['exec', 'tsc', '-p', cfg, '--noEmit'], { stdio: 'inherit', shell: true });
   if (res.status !== 0) failed = true;
 }
 
