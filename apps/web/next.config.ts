@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: [
@@ -19,6 +20,15 @@ const nextConfig: NextConfig = {
     "@repo/balance-card",
     "@repo/statement",
   ],
+  webpack(config) {
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@': path.resolve(__dirname, 'src'),
+      '@repo': path.resolve(__dirname, '..', '..', 'packages'),
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

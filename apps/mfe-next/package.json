@@ -1,0 +1,20 @@
+{
+  "name": "mfe-next",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch & node cors-server.js",
+    "deploy": "node deploy-to-shell.js",
+    "start:cors": "node cors-server.js"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "single-spa-react": "4.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.18.0",
+    "serve": "14.2.0"
+  }
+}

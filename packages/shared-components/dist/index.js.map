@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/index.tsx"],
+  "sourcesContent": ["import React from 'react'\r\n\r\nexport interface HomeWidgetProps {\r\n  userName?: string\r\n}\r\n\r\nexport default function HomeWidget({ userName = 'Usu\u00E1rio' }: HomeWidgetProps) {\r\n  function handleClick() {\r\n    window.dispatchEvent(new CustomEvent('mfe:action', { detail: { from: 'shared-home', time: Date.now() } }))\r\n  }\r\n\r\n  return (\r\n    <div style={{ padding: 16, border: '1px solid #ddd', borderRadius: 8 }}>\r\n      <h2 style={{ margin: 0 }}>Ol\u00E1, {userName} \u2014 Shared Home Widget</h2>\r\n      <p style={{ marginTop: 8, marginBottom: 8 }}>Este componente \u00E9 extra\u00EDdo para `packages/shared-components` e pode ser usado tanto pelo Next app quanto pelo MFE.</p>\r\n      <button onClick={handleClick} style={{ padding: '8px 12px', borderRadius: 6 }}>Emitir evento</button>\r\n    </div>\r\n  )\r\n}\r\n"],
+  "mappings": ";AAAA,OAAO,WAAW;AAMH,SAAR,WAA4B,EAAE,WAAW,aAAU,GAAoB;AAC5E,WAAS,cAAc;AACrB,WAAO,cAAc,IAAI,YAAY,cAAc,EAAE,QAAQ,EAAE,MAAM,eAAe,MAAM,KAAK,IAAI,EAAE,EAAE,CAAC,CAAC;AAAA,EAC3G;AAEA,SACE,oCAAC,SAAI,OAAO,EAAE,SAAS,IAAI,QAAQ,kBAAkB,cAAc,EAAE,KACnE,oCAAC,QAAG,OAAO,EAAE,QAAQ,EAAE,KAAG,YAAM,UAAS,4BAAqB,GAC9D,oCAAC,OAAE,OAAO,EAAE,WAAW,GAAG,cAAc,EAAE,KAAG,0HAAkH,GAC/J,oCAAC,YAAO,SAAS,aAAa,OAAO,EAAE,SAAS,YAAY,cAAc,EAAE,KAAG,eAAa,CAC9F;AAEJ;",
+  "names": []
+}
