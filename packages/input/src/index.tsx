@@ -12,7 +12,7 @@ const inputVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white border-border text-foreground",
+        default: "bg-input border-border text-foreground",
         outline: "bg-background border-input text-foreground",
         ghost: "bg-transparent border-transparent text-foreground hover:bg-accent/10",
       },

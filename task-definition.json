@@ -1,9 +1,9 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:us-east-1:957126744475:task-definition/TSK-tech-challenge:3",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:957126744475:task-definition/TSK-tech-challenge:8",
   "containerDefinitions": [
     {
       "name": "tech-challenge",
-      "image": "957126744475.dkr.ecr.us-east-1.amazonaws.com/techchallenge-fiap-lucasmoura@sha256:94a8d8cd0d344435f1478d0fa4eb0ae26113731bb25c5bf014f3e8869a3bb686",
+      "image": "957126744475.dkr.ecr.us-east-1.amazonaws.com/techchallenge-fiap-lucasmoura:latest",
       "cpu": 0,
       "portMappings": [
         {
@@ -22,11 +22,22 @@
         }
       ],
       "essential": true,
-      "environment": [],
-      "environmentFiles": [],
+      "environment": [
+        {
+          "name": "BETTER_AUTH_SECRET",
+          "value": "ZimJbjO+m7MH9CGHmjCCJuL3yaPEOGbB2yQYEMZuRMA="
+        },
+        {
+          "name": "BETTER_AUTH_URL",
+          "value": "http://localhost:3000"
+        },
+        {
+          "name": "DATABASE_URL",
+          "value": "postgresql://postgres:lucasmoura1991@tech-challenge.cvflztzl9scx.us-east-1.rds.amazonaws.com:5432/postgres?sslmode=require"
+        }
+      ],
       "mountPoints": [],
       "volumesFrom": [],
-      "ulimits": [],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -44,7 +55,7 @@
   "taskRoleArn": "arn:aws:iam::957126744475:role/ecsTaskExecutionRole",
   "executionRoleArn": "arn:aws:iam::957126744475:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
-  "revision": 3,
+  "revision": 8,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -59,9 +70,6 @@
     },
     {
       "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
     },
     {
       "name": "com.amazonaws.ecs.capability.task-iam-role"
@@ -80,7 +88,7 @@
     }
   ],
   "placementConstraints": [],
-  "compatibilities": ["EC2", "MANAGED_INSTANCES", "FARGATE"],
+  "compatibilities": ["EC2", "FARGATE", "MANAGED_INSTANCES"],
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
@@ -88,8 +96,7 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "registeredAt": "2026-06-14T17:16:54.599Z",
+  "registeredAt": "2026-06-17T00:10:32.860Z",
   "registeredBy": "arn:aws:iam::957126744475:root",
-  "enableFaultInjection": false,
   "tags": []
 }
