@@ -1,20 +1,23 @@
-# Tech Challenge — Design System Monorepo
+# Tech Challenge — Design System & Micro-Frontends
 
-Monorepo com design system de componentes compartilhados e aplicação web financeira. Construído com Next.js 15, React 19, Tailwind CSS e pnpm workspaces.
+Monorepo de uma aplicação financeira desenvolvida como exercício de pós-graduação em front-end. Aplica conceitos de **design system compartilhado** e **micro-frontends por domínio** com single-spa.
 
 ## Stack
 
 | Tecnologia | Versão | Uso |
 |---|---|---|
 | Next.js | ^15.3.1 | App web principal (App Router) |
-| React | ^19.1.0 | UI |
+| React | ^19.1.0 | UI do app web |
+| React | 18.2.0 | UI dos MFEs (compatibilidade single-spa) |
 | TypeScript | ^5.4.5 | Tipagem estática (strict mode) |
 | Tailwind CSS | ^3.4.14 | Estilização via tokens de tema |
 | Storybook | 8 + Vite | Documentação e testes visuais |
 | pnpm workspaces | — | Gerenciamento do monorepo |
+| single-spa | ^5.10.4 | Orquestração de micro-frontends |
+| esbuild | ^0.18.0 | Build dos bundles MFE |
+| better-auth | ^1.6.14 | Autenticação com PostgreSQL |
 | Radix UI | — | Primitivos acessíveis (Dialog, Select) |
 | class-variance-authority | — | Variantes de componentes |
-| MSW | ^2.13.4 | Mock de API no browser |
 | @number-flow/react | ^0.6.0 | Animação de valores numéricos |
 | Biome | ^2.4.12 | Lint e formatação |
 
@@ -23,27 +26,24 @@ Monorepo com design system de componentes compartilhados e aplicação web finan
 ```
 tech-challenge/
 ├── apps/
-│   ├── web/                        # Aplicação Next.js 15
-│   │   └── src/
-│   │       ├── app/
-│   │       │   ├── page.tsx        # Rota / (home)
-│   │       │   ├── components/     # Componentes de página (home)
-│   │       │   └── transacoes/     # Rota /transacoes
-│   │       ├── components/         # Componentes globais (ThemeToggle)
-│   │       └── mocks/              # MSW handlers e tipos
-│   └── storybook/                  # Storybook 8 + Vite
-│       └── src/stories/            # Stories de todos os pacotes
+│   ├── web/              # Next.js 15 — host principal (auth + páginas protegidas)
+│   ├── shell/            # Orquestrador single-spa dos micro-frontends
+│   ├── mfe-next/         # MFE: domínio Dashboard / Home
+│   ├── mfe-transactions/ # MFE: domínio Transações
+│   └── storybook/        # Storybook 8 + Vite
 ├── packages/
-│   ├── balance-card/               # @repo/balance-card
-│   ├── button/                     # @repo/button
-│   ├── icons/                      # @repo/icons
-│   ├── input/                      # @repo/input
-│   ├── modal/                      # @repo/modal
-│   ├── navbar/                     # @repo/navbar
-│   ├── select/                     # @repo/select
-│   ├── sidebar/                    # @repo/sidebar
-│   ├── statement/                  # @repo/statement
-│   └── theme/                      # @repo/theme
+│   ├── @repo/theme           # Plugin Tailwind com tokens de tema (light/dark)
+│   ├── @repo/button          # Button (6 variantes, CVA)
+│   ├── @repo/input           # Input com label e variantes
+│   ├── @repo/select          # Select (Radix)
+│   ├── @repo/modal           # Modal (Radix Dialog)
+│   ├── @repo/navbar          # Navbar com nome do usuário
+│   ├── @repo/sidebar         # Sidebar de navegação
+│   ├── @repo/balance-card    # Card de saldo animado (NumberFlow)
+│   ├── @repo/statement       # Lista de transações
+│   ├── @repo/icons           # Ícones SVG (factory createIcon)
+│   └── @repo/shared-components # Componentes compartilhados entre MFEs
+├── docker-compose.yaml   # PostgreSQL 17 na porta 5433
 ├── biome.json
 ├── package.json
 ├── pnpm-workspace.yaml
@@ -54,16 +54,46 @@ tech-challenge/
 
 - Node.js >= 18
 - pnpm >= 9
+- Docker (para o PostgreSQL)
 
 ```bash
 npm install -g pnpm
 ```
 
-## Instalação
+## Configuração inicial
+
+### 1. Instalar dependências
 
 ```bash
 pnpm install
 ```
+
+### 2. Subir o banco de dados
+
+```bash
+docker compose up -d
+```
+
+O PostgreSQL sobe na porta **5433** (mapeado para 5432 dentro do container).
+
+### 3. Variáveis de ambiente
+
+Crie o arquivo `apps/web/.env.local`:
+
+```env
+BETTER_AUTH_SECRET=<gere com: openssl rand -base64 32>
+BETTER_AUTH_URL=http://localhost:3000
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/techchallenge
+```
+
+### 4. Rodar a migration do banco
+
+```bash
+cd apps/web
+npx auth@latest migrate
+```
+
+Isso cria as tabelas `user`, `session`, `account` e `verification` usadas pelo better-auth. Deve ser executado **uma única vez** por ambiente.
 
 ## Comandos
 
@@ -71,30 +101,147 @@ Execute sempre a partir da raiz do repositório.
 
 | Comando | Descrição |
 |---|---|
-| `pnpm dev` | Web + Storybook em paralelo |
-| `pnpm web` | Apenas Next.js (localhost:3000) |
-| `pnpm storybook` | Apenas Storybook (localhost:6006) |
+| `pnpm web` | Apenas Next.js (`localhost:3000`) |
+| `pnpm dev` | Next.js + Storybook em paralelo |
+| `pnpm storybook` | Apenas Storybook (`localhost:6006`) |
 | `pnpm build` | Build completo (packages → apps) |
 | `pnpm lint` | Lint + auto-fix com Biome |
 | `pnpm lint:check` | Lint sem auto-fix |
 | `pnpm format` | Formatação com Biome |
+| `pnpm typecheck:projects` | TypeScript strict em todos os workspaces |
 
-## Pacotes
+## Arquitetura de Micro-Frontends
 
-Todos os pacotes ficam em `packages/@repo/*`, não possuem etapa de build e exportam o source `.tsx` diretamente. O app `web` os transpila via `transpilePackages` no `next.config.ts`.
+O projeto implementa o padrão **micro-frontend por domínio** com [single-spa](https://single-spa.js.org/). Cada domínio de negócio é um artefato independente com seu próprio bundle, ciclo de build e deploy.
 
-| Pacote | Componentes exportados | Dependências principais |
-|---|---|---|
-| `@repo/theme` | `defaultThemePlugin`, `defaultTheme`, `defaultThemeVars`, `darkThemeVars` | tailwindcss |
-| `@repo/icons` | `createIcon` + ícones SVG (User, Eye, Pencil, Trash, Search, Plus, Chevrons…) | — |
-| `@repo/button` | `<Button>` — variantes: `default`, `destructive`, `outline`, `secondary`, `ghost`, `link` | Radix Slot, CVA |
-| `@repo/input` | `<Input>` com `label`, variantes `default`, `outline`, `ghost` e tamanhos `sm`, `default`, `lg` | CVA |
-| `@repo/select` | `<Select>` + primitivos Radix exportados individualmente | Radix Select, `@repo/icons` |
-| `@repo/modal` | `<Modal>` baseado em Radix Dialog | Radix Dialog |
-| `@repo/navbar` | `<Navbar>` com nome do usuário e slot de ações | `@repo/icons` |
-| `@repo/sidebar` | `<Sidebar>` de navegação com itens ativos | — |
-| `@repo/balance-card` | `<BalanceCard>` com saldo animado via `balanceValue` (NumberFlow) | `@repo/icons` |
-| `@repo/statement` | `<Statement>` + `<TransactionItem>` para extrato | — |
+### Diagrama geral
+
+```
+┌────────────────────────────────────────────┐
+│                apps/shell                  │
+│       (orquestrador — HTML + single-spa)   │
+│                                            │
+│  /mfe-next        →  vendor/mfe-next.js    │  ← domínio Dashboard
+│  /mfe-transacoes  →  vendor/mfe-           │
+│                       transactions.js      │  ← domínio Transações
+└────────────────────────────────────────────┘
+
+         apps/web (Next.js)
+  → autenticação, layout, páginas protegidas
+```
+
+O shell monitora a URL e chama `mount()` / `unmount()` de cada MFE conforme a rota muda. Os bundles são carregados **lazily** na primeira ativação e cacheados pelo browser nas navegações seguintes.
+
+### Domínios registrados
+
+| MFE | Pasta | Rota ativa | Responsabilidade |
+|-----|-------|------------|-----------------|
+| `mfe-next` | `apps/mfe-next/` | `/mfe-next` | Dashboard, widget de saldo e resumo |
+| `mfe-transactions` | `apps/mfe-transactions/` | `/mfe-transacoes` | Extrato e histórico de transações |
+
+### Contrato de ciclo de vida (single-spa)
+
+Cada MFE exporta exatamente três funções:
+
+```ts
+export function bootstrap(props) { /* inicialização única — chamada uma vez */ }
+export function mount(props)     { /* renderiza o componente React no DOM */ }
+export function unmount(props)   { /* desmonta e remove o elemento do DOM */ }
+```
+
+Essas funções também são expostas em `globalThis` para que o shell consiga carregá-las via `<script>` clássico:
+
+```ts
+globalThis.mfeTransactions = { bootstrap, mount, unmount }
+```
+
+### Build e deploy dos MFEs
+
+Cada MFE usa esbuild para gerar um bundle **IIFE autocontido** (inclui React internamente):
+
+```bash
+# MFE Dashboard
+cd apps/mfe-next
+npm run build    # gera dist/mfe-next.js
+npm run deploy   # copia para apps/shell/vendor/mfe-next.js
+
+# MFE Transações
+cd apps/mfe-transactions
+npm run build    # gera dist/mfe-transactions.js
+npm run deploy   # copia para apps/shell/vendor/mfe-transactions.js
+```
+
+Os bundles em `apps/shell/vendor/` são servidos pelo shell. Em produção, cada bundle pode ser publicado independentemente em um CDN sem coordenação entre times.
+
+### Rodando o shell
+
+```bash
+cd apps/shell
+npx serve .
+# Navegue para /mfe-next (Dashboard) ou /mfe-transacoes (Transações)
+```
+
+### Componentes compartilhados entre MFEs
+
+O pacote `packages/@repo/shared-components` exporta componentes que podem ser usados por mais de um MFE. Os MFEs importam diretamente do source TypeScript — não há etapa de build separada para este pacote.
+
+## Autenticação
+
+O app `apps/web` usa [better-auth](https://better-auth.com/) com PostgreSQL.
+
+| Aspecto | Detalhe |
+|---------|---------|
+| Handler da API | `GET/POST /api/auth/[...all]` (automático via `toNextJsHandler`) |
+| Middleware | Protege todas as rotas exceto `/login`, `/api/*` e assets do Next.js |
+| Verificação | `getSessionCookie()` no edge — sem query ao banco no middleware |
+| Sessão | Cookie httpOnly gerado pelo better-auth após login bem-sucedido |
+
+Fluxo de autenticação:
+
+```
+Usuário sem sessão → redireciona /login
+  → POST /api/auth/sign-in  (login)
+  → POST /api/auth/sign-up  (cadastro)
+  → cookie de sessão criado
+  → redirecionado para /
+```
+
+## Aplicação Web (`apps/web`)
+
+### Rotas
+
+| Rota | Tipo | Descrição |
+|------|------|-----------|
+| `/login` | Pública | Login e cadastro de conta |
+| `/` | Protegida | Saldo da conta + formulário de nova transação |
+| `/transacoes` | Protegida | Lista completa com busca, filtro e edição |
+| `/mfe-next` | Protegida | Página que incorpora o MFE de Dashboard |
+
+### API Routes
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET/POST` | `/api/auth/[...all]` | Handler do better-auth |
+| `GET` | `/api/saldo` | Saldo calculado |
+| `GET/POST` | `/api/transacoes` | Listar / criar transações |
+| `PUT/DELETE` | `/api/transacoes/:id` | Editar / excluir transação |
+
+## Design System (`packages/`)
+
+Todos os pacotes em `packages/@repo/*` exportam source `.tsx` diretamente — sem etapa de build. O Next.js os transpila via `transpilePackages` no `next.config.ts`.
+
+| Pacote | Descrição |
+|--------|-----------|
+| `@repo/theme` | Plugin Tailwind com tokens HSL (light + dark) |
+| `@repo/icons` | Ícones SVG via factory `createIcon` |
+| `@repo/button` | Button com variantes: `default`, `destructive`, `outline`, `secondary`, `ghost`, `link` |
+| `@repo/input` | Input com label, variantes e tamanhos |
+| `@repo/select` | Select acessível (Radix UI) |
+| `@repo/modal` | Modal (Radix Dialog) |
+| `@repo/navbar` | Navbar com nome do usuário logado |
+| `@repo/sidebar` | Sidebar de navegação com itens ativos |
+| `@repo/balance-card` | Card de saldo com animação numérica (NumberFlow) |
+| `@repo/statement` | Lista de transações agrupadas por mês |
 
 ### Tema
 
@@ -103,28 +250,7 @@ O `@repo/theme` define dois conjuntos de variáveis CSS HSL:
 - **`defaultThemeVars`** — tema claro (paleta teal/verde-sálvia)
 - **`darkThemeVars`** — tema escuro (injetado via classe `.dark` no `<html>`)
 
-Tokens disponíveis como classes Tailwind: `bg-background`, `text-primary`, `bg-card`, `text-accent`, `text-destructive`, `border-border`, entre outros.
-
-## Aplicação Web
-
-### Rotas
-
-| Rota | Componente principal | Descrição |
-|---|---|---|
-| `/` | `HomeContent` | Saldo da conta + formulário de nova transação |
-| `/transacoes` | `TransacoesContent` | Lista completa com busca, filtro e edição |
-
-### Mock API (MSW)
-
-Handlers em `apps/web/src/mocks/handlers.ts`. Dados persistidos no `localStorage`.
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `GET` | `/api/saldo` | Saldo calculado de todas as transações |
-| `GET` | `/api/transacoes` | Transações agrupadas por mês (desc por ID) |
-| `POST` | `/api/transacoes` | Criar nova transação |
-| `PUT` | `/api/transacoes/:id` | Editar transação existente |
-| `DELETE` | `/api/transacoes/:id` | Excluir transação |
+Tokens disponíveis como classes Tailwind: `bg-background`, `text-primary`, `bg-card`, `text-accent`, `text-destructive`, `border-border`, entre outros. Nunca use valores hex/hsl fixos nos componentes.
 
 ## Padrões de código
 
@@ -135,16 +261,9 @@ Handlers em `apps/web/src/mocks/handlers.ts`. Dados persistidos no `localStorage
 - Usar `React.forwardRef` quando o componente renderizar um elemento do DOM
 - Novos ícones: usar a factory `createIcon` em `@repo/icons`, nunca inline SVG
 
-### Estilização
-
-- Somente Tailwind CSS com os tokens semânticos do `@repo/theme`
-- Nunca valores hex/hsl fixos nos componentes
-- Variantes via CVA quando houver múltiplas variações visuais
-- Dark mode: classe `.dark` no `<html>`, sem lógica de tema nos componentes
-
 ### TypeScript
 
-- Strict mode — sem `any` ou `@ts-ignore` sem comentário explicando o motivo
+- Strict mode ativado — sem `any` ou `@ts-ignore` sem comentário explicando o motivo
 - Interfaces explícitas para todas as props de componentes
 - PascalCase para componentes e interfaces, camelCase para props e variáveis
 
@@ -155,47 +274,3 @@ Stories em `apps/storybook/src/stories/`. Todo componente novo em `packages/` re
 ```bash
 pnpm storybook   # localhost:6006
 ```
-
-## Microfrontends (Shell + MFE)
-
-Este repositório inclui um shell simples e um microfrontend de demonstração (`apps/mfe-next`). As instruções abaixo explicam como rodar o MFE dentro do shell no seu ambiente local — usamos uma abordagem de demo que carrega o bundle do MFE a partir do mesmo host do shell para evitar problemas de CORS em desenvolvimento.
-
-Recomendado (mesma origem, mais simples):
-
-1. Build do MFE:
-
-```bash
-node apps/mfe-next/build.js
-```
-
-2. Copiar o bundle para o shell (script `deploy` já disponível):
-
-```bash
-node apps/mfe-next/deploy-to-shell.js
-# ou: pnpm --filter mfe-next deploy
-```
-
-3. Servir o shell (serve arquivos estáticos):
-
-```bash
-npx serve -s apps/shell -l 9000
-```
-
-4. Abra `http://localhost:9000` e clique em "MFE Next (stub)".
-
-Alternativa (CORS remoto):
-
-- Se preferir servir o MFE em outro servidor/porta (ex.: `http://localhost:9002`), inicie o servidor CORS incluído em `apps/mfe-next/cors-server.js` que adiciona o header `Access-Control-Allow-Origin: *`:
-
-```bash
-node apps/mfe-next/cors-server.js
-# ou: pnpm --filter mfe-next start:cors
-```
-
-- Nesse caso, ajuste o import map em `apps/shell/index.html` para apontar `mfe-next` para `http://localhost:9002/mfe-next.js` (ou edite dinamicamente `apps/shell/index.html`).
-
-Notas:
-- O repositório contém um utilitário `apps/mfe-next/deploy-to-shell.js` que copia automaticamente `dist/mfe-next.js` para `apps/shell/vendor/mfe-next.js` — isso evita CORS durante desenvolvimento.
-- Para desenvolvimento contínuo, execute `node apps/mfe-next/build.js --watch` em um terminal e `node apps/mfe-next/cors-server.js` ou sirva o shell conforme preferir.
-- O shell usa um shim local (`apps/shell/vendor/single-spa-shim.js`) para demonstração; em produção substitua pelo `single-spa` oficial e ajuste o carregamento conforme necessário.
-

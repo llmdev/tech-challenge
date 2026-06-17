@@ -2,15 +2,15 @@
   function doRegister(singleSpa) {
     const { registerApplication, start } = singleSpa;
 
-    function hashPrefix(prefix) {
+    function pathPrefix(prefix) {
       return function(location) {
         return location.pathname === prefix || location.pathname.startsWith(prefix + '/');
       };
     }
 
+    // Domínio: Home / Dashboard
     registerApplication({
       name: 'mfe-next',
-      // load the script from same-origin vendor directory and return the global lifecycles
       app: () => {
         if (globalThis.mfeNext) return Promise.resolve(globalThis.mfeNext);
         return new Promise((resolve, reject) => {
@@ -24,7 +24,26 @@
           document.head.appendChild(s);
         });
       },
-      activeWhen: hashPrefix('/mfe-next')
+      activeWhen: pathPrefix('/mfe-next'),
+    });
+
+    // Domínio: Transações
+    registerApplication({
+      name: 'mfe-transactions',
+      app: () => {
+        if (globalThis.mfeTransactions) return Promise.resolve(globalThis.mfeTransactions);
+        return new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = '/vendor/mfe-transactions.js';
+          s.onload = () => {
+            if (globalThis.mfeTransactions) resolve(globalThis.mfeTransactions);
+            else reject(new Error('mfeTransactions lifecycles not found on globalThis after load'));
+          };
+          s.onerror = () => reject(new Error('Failed to load mfe-transactions script'));
+          document.head.appendChild(s);
+        });
+      },
+      activeWhen: pathPrefix('/mfe-transacoes'),
     });
 
     start();
@@ -36,7 +55,6 @@
     return;
   }
 
-  // Try to load UMD from unpkg as a fallback
   const script = document.createElement('script');
   script.src = 'https://unpkg.com/single-spa@5.10.4/lib/single-spa.min.js';
   script.onload = () => {
