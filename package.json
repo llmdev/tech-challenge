@@ -3,17 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm --parallel --filter=web --filter=storybook dev",
-    "build": "pnpm --filter=./packages/* --if-present build && pnpm --filter=./apps/* --if-present build ",
+    "dev": "pnpm --parallel --filter=web --filter=transacoes --filter=storybook dev",
+    "dev:zones": "pnpm --parallel --filter=web --filter=transacoes dev",
+    "build": "pnpm --filter=./packages/* --if-present build && pnpm --filter=./apps/* --if-present build",
     "lint": "biome lint --write .",
     "lint:check": "biome lint .",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "storybook": "pnpm --filter=storybook dev",
-    "web": "pnpm --filter=web start"
+    "web": "pnpm --filter=web start",
+    "transacoes": "pnpm --filter=transacoes start"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.12",
     "typescript": "^5.4.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "kysely": "^0.28.17"
+    }
   }
 }

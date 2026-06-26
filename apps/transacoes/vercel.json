@@ -1,0 +1,5 @@
+{
+  "microfrontends": {
+    "owns": ["/transacoes", "/transacoes/:path*"]
+  }
+}

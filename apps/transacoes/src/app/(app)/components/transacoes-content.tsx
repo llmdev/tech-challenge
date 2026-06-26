@@ -4,8 +4,16 @@ import { useCallback, useEffect, useState } from "react";
 import NumberFlow from "@number-flow/react";
 import { Button } from "@repo/button";
 import { Input } from "@repo/input";
-import { EyeIcon, PencilIcon, TrashIcon, SearchIcon, PlusIcon, ChevronUpIcon, ChevronDownIcon } from "@repo/icons";
-import type { MonthGroup, Transaction } from "@/app/api/_store";
+import {
+  EyeIcon,
+  PencilIcon,
+  TrashIcon,
+  SearchIcon,
+  PlusIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+} from "@repo/icons";
+
 import { TransactionModal } from "./transaction-modal";
 
 type Filter = "all" | "credit" | "debit";
@@ -25,7 +33,7 @@ function applySearch(groups: MonthGroup[], term: string): MonthGroup[] {
       transactions: group.transactions.filter(
         (tx) =>
           tx.description.toLowerCase().includes(lower) ||
-          tx.institution.toLowerCase().includes(lower)
+          tx.institution.toLowerCase().includes(lower),
       ),
     }))
     .filter((group) => group.transactions.length > 0);
@@ -48,7 +56,10 @@ function totalTransactions(groups: MonthGroup[]): number {
 function parseAmount(amount: string): number {
   const sign = amount.includes("+") ? 1 : -1;
   const num = parseFloat(
-    amount.replace(/[^0-9,.]/g, "").replace(/\./g, "").replace(",", ".")
+    amount
+      .replace(/[^0-9,.]/g, "")
+      .replace(/\./g, "")
+      .replace(",", "."),
   );
   return sign * (Number.isNaN(num) ? 0 : num);
 }
@@ -65,11 +76,13 @@ export function TransacoesContent() {
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [editTarget, setEditTarget] = useState<Transaction | undefined>(undefined);
+  const [editTarget, setEditTarget] = useState<Transaction | undefined>(
+    undefined,
+  );
 
   const fetchData = useCallback(() => {
     setLoading(true);
-    fetch("/api/transacoes")
+    fetch(`/api/transacoes`)
       .then((res) => res.json())
       .then((data: MonthGroup[]) => {
         setAllGroups(data);
@@ -110,16 +123,22 @@ export function TransacoesContent() {
         onSuccess={fetchData}
       />
 
-      {/* Cabeçalho e filtros */}
       <div className="bg-card rounded-2xl p-4 sm:p-6">
         <div className="flex items-center justify-between mb-5 gap-3">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Transações</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              Transações
+            </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
               {loading ? "Carregando..." : `${count} transações encontradas`}
             </p>
           </div>
-          <Button size="sm" icon={<PlusIcon className="w-4 h-4" />} onClick={openCreate} className="flex-shrink-0">
+          <Button
+            size="sm"
+            icon={<PlusIcon className="w-4 h-4" />}
+            onClick={openCreate}
+            className="flex-shrink-0"
+          >
             <span className="hidden sm:inline">Nova transação</span>
             <span className="sm:hidden sr-only">Nova</span>
           </Button>
@@ -157,7 +176,6 @@ export function TransacoesContent() {
         </div>
       </div>
 
-      {/* Lista de transações */}
       <TransacoesList
         groups={filteredGroups}
         loading={loading}
@@ -192,7 +210,11 @@ function TransacoesList({
   onDelete: (id: string) => void;
 }) {
   const isNegative = balanceValue < 0;
-  const colorClass = loading ? "text-muted-foreground" : isNegative ? "text-destructive" : "text-accent";
+  const colorClass = loading
+    ? "text-muted-foreground"
+    : isNegative
+      ? "text-destructive"
+      : "text-accent";
 
   const balanceRow = (
     <div
@@ -204,10 +226,13 @@ function TransacoesList({
             : "bg-accent/10 border-l-accent"
       }`}
     >
-      {/* decorative blurred orb */}
       <div
         className={`absolute -right-4 -top-4 w-24 h-24 rounded-full blur-2xl pointer-events-none ${
-          loading ? "opacity-0" : isNegative ? "bg-destructive/20" : "bg-accent/20"
+          loading
+            ? "opacity-0"
+            : isNegative
+              ? "bg-destructive/20"
+              : "bg-accent/20"
         }`}
       />
 
@@ -215,8 +240,12 @@ function TransacoesList({
         <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mb-0.5">
           {BALANCE_LABEL[filter]}
         </p>
-        <p className={`text-2xl font-bold tracking-tight tabular-nums ${colorClass}`}>
-          {loading ? "—" : (
+        <p
+          className={`text-2xl font-bold tracking-tight tabular-nums ${colorClass}`}
+        >
+          {loading ? (
+            "—"
+          ) : (
             <NumberFlow
               value={balanceValue}
               locales="pt-BR"
@@ -228,7 +257,11 @@ function TransacoesList({
 
       <div
         className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 ${
-          loading ? "bg-muted" : isNegative ? "bg-destructive/10" : "bg-accent/15"
+          loading
+            ? "bg-muted"
+            : isNegative
+              ? "bg-destructive/10"
+              : "bg-accent/15"
         }`}
       >
         {loading ? (
@@ -256,7 +289,9 @@ function TransacoesList({
       <div className="bg-card rounded-2xl p-6">
         {balanceRow}
         <div className="flex items-center justify-center py-12">
-          <p className="text-sm text-muted-foreground">Nenhuma transação encontrada.</p>
+          <p className="text-sm text-muted-foreground">
+            Nenhuma transação encontrada.
+          </p>
         </div>
       </div>
     );
@@ -266,85 +301,85 @@ function TransacoesList({
     <div className="bg-card rounded-2xl p-6">
       {balanceRow}
       <div className="space-y-8">
-      {groups.map((group) => (
-        <div key={group.month}>
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-xs font-semibold text-accent uppercase tracking-wider">
-              {group.month}
-            </span>
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground">
-              {group.transactions.length} transações
-            </span>
-          </div>
+        {groups.map((group) => (
+          <div key={group.month}>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-xs font-semibold text-accent uppercase tracking-wider">
+                {group.month}
+              </span>
+              <div className="flex-1 h-px bg-border" />
+              <span className="text-xs text-muted-foreground">
+                {group.transactions.length} transações
+              </span>
+            </div>
 
-          <div>
-            {group.transactions.map((tx: Transaction) => (
-              <div
-                key={tx.id}
-                className="flex items-center gap-2 sm:gap-4 py-3 px-2 sm:px-3 rounded-xl hover:bg-muted/50 transition-colors group border-b border-border/60 last:border-b-0"
-              >
+            <div>
+              {group.transactions.map((tx: Transaction) => (
                 <div
-                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0 text-base font-semibold select-none ${
-                    tx.type === "credit"
-                      ? "bg-accent/15 text-accent"
-                      : "bg-destructive/10 text-destructive"
-                  }`}
+                  key={tx.id}
+                  className="flex items-center gap-2 sm:gap-4 py-3 px-2 sm:px-3 rounded-xl hover:bg-muted/50 transition-colors group border-b border-border/60 last:border-b-0"
                 >
-                  {tx.type === "credit" ? "↓" : "↑"}
+                  <div
+                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0 text-base font-semibold select-none ${
+                      tx.type === "credit"
+                        ? "bg-accent/15 text-accent"
+                        : "bg-destructive/10 text-destructive"
+                    }`}
+                  >
+                    {tx.type === "credit" ? "↓" : "↑"}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground leading-tight truncate">
+                      {tx.description}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate mt-0.5">
+                      {tx.institution}
+                    </p>
+                  </div>
+
+                  <span className="hidden sm:block text-xs text-muted-foreground w-24 text-right flex-shrink-0">
+                    {tx.date}
+                  </span>
+
+                  <span
+                    className={`text-sm font-semibold text-right flex-shrink-0 ${
+                      tx.type === "credit" ? "text-accent" : "text-destructive"
+                    }`}
+                  >
+                    {tx.amount}
+                  </span>
+
+                  <div className="flex gap-0.5 flex-shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      icon={<EyeIcon className="w-4 h-4" />}
+                      aria-label="Ver detalhes"
+                      className="w-8 h-8 rounded-full hidden sm:inline-flex"
+                    />
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      icon={<PencilIcon className="w-4 h-4" />}
+                      aria-label="Editar"
+                      className="w-8 h-8 rounded-full"
+                      onClick={() => onEdit(tx)}
+                    />
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      icon={<TrashIcon className="w-4 h-4" />}
+                      aria-label="Excluir"
+                      className="w-8 h-8 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => onDelete(tx.id)}
+                    />
+                  </div>
                 </div>
-
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground leading-tight truncate">
-                    {tx.description}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate mt-0.5">
-                    {tx.institution}
-                  </p>
-                </div>
-
-                <span className="hidden sm:block text-xs text-muted-foreground w-24 text-right flex-shrink-0">
-                  {tx.date}
-                </span>
-
-                <span
-                  className={`text-sm font-semibold text-right flex-shrink-0 ${
-                    tx.type === "credit" ? "text-accent" : "text-destructive"
-                  }`}
-                >
-                  {tx.amount}
-                </span>
-
-                <div className="flex gap-0.5 flex-shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    icon={<EyeIcon className="w-4 h-4" />}
-                    aria-label="Ver detalhes"
-                    className="w-8 h-8 rounded-full hidden sm:inline-flex"
-                  />
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    icon={<PencilIcon className="w-4 h-4" />}
-                    aria-label="Editar"
-                    className="w-8 h-8 rounded-full"
-                    onClick={() => onEdit(tx)}
-                  />
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    icon={<TrashIcon className="w-4 h-4" />}
-                    aria-label="Excluir"
-                    className="w-8 h-8 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => onDelete(tx.id)}
-                  />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
       </div>
     </div>
   );

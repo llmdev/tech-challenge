@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
+const TRANSACOES_URL =
+  process.env.TRANSACOES_URL ?? "http://localhost:3001";
+
 const nextConfig: NextConfig = {
   logging: {
     fetches: {
@@ -25,6 +28,18 @@ const nextConfig: NextConfig = {
     "@repo/balance-card",
     "@repo/statement",
   ],
+  async rewrites() {
+    return [
+      {
+        source: "/transacoes",
+        destination: `${TRANSACOES_URL}/transacoes`,
+      },
+      {
+        source: "/transacoes/:path*",
+        destination: `${TRANSACOES_URL}/transacoes/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

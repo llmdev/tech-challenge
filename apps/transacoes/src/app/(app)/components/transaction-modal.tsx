@@ -1,7 +1,7 @@
 "use client";
 
 import { Modal } from "@repo/modal";
-import { TransactionForm } from "@/app/components/transaction-form";
+import { TransactionForm } from "@/components/transaction-form";
 import type { Transaction } from "@/app/api/_store";
 
 export interface TransactionModalProps {
