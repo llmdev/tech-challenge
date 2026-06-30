@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev:storybook": "pnpm --parallel --filter=web --filter=transacoes --filter=storybook dev",
-    "dev": "pnpm --parallel --filter=web --filter=transacoes dev && pnpm --filter=web proxy",
-    "proxy": "pnpm --filter=web proxy",
+    "dev:storybook": "pnpm --parallel --filter=storybook dev",
+    "dev": "pnpm --parallel --filter=tech-challenge-web --filter=tech-challenge-transacoes dev",
+    "proxy": "pnpm --filter=tech-challenge-web proxy",
     "build": "pnpm --filter=./packages/* --if-present build && pnpm --filter=./apps/* --if-present build",
     "lint": "biome lint --write .",
     "lint:check": "biome lint .",

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p $(microfrontends port)",
-    "proxy": "microfrontends proxy microfrontends.json --local-apps web transacoes",
+    "proxy": "microfrontends proxy microfrontends.json --local-apps tech-challenge-web tech-challenge-transacoes",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
