@@ -9,7 +9,8 @@
     },
     "tech-challenge-transacoes": {
       "development": {
-        "local": 3005
+        "local": 3005,
+        "fallback": "tech-challenge-transacoes.vercel.app"
       },
       "routing": [
         {
