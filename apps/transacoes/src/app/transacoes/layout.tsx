@@ -5,6 +5,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/logout-button";
 import { BottomNav } from "@/components/bottom-nav";
 import { auth } from "../../libs/auth";
+import { LocalNavbar } from "./components/local-navbar";
 
 const menuItems = [
   { label: "Início", href: "/", active: false },
@@ -17,21 +18,9 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = await headers();
-  const session = await auth.api.getSession({ headers: headersList });
-
-  const userName = session?.user?.name ?? "Usuário";
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar
-        userName={userName}
-        actions={
-          <div className="flex items-center gap-1">
-            <ThemeToggle />
-          </div>
-        }
-      />
+      <LocalNavbar />
 
       <main className="flex-1 p-4 sm:p-6 pb-24 lg:pb-6">
         <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-5">

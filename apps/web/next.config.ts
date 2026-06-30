@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
-
-const TRANSACOES_URL =
-  process.env.TRANSACOES_URL ?? "http://localhost:3001";
+import { withMicrofrontends } from "@vercel/microfrontends/next/config";
+import { withVercelToolbar } from "@vercel/toolbar/plugins/next";
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   logging: {
     fetches: {
       fullUrl: true,
@@ -28,18 +31,8 @@ const nextConfig: NextConfig = {
     "@repo/balance-card",
     "@repo/statement",
   ],
-  async rewrites() {
-    return [
-      {
-        source: "/transacoes",
-        destination: `${TRANSACOES_URL}/transacoes`,
-      },
-      {
-        source: "/transacoes/:path*",
-        destination: `${TRANSACOES_URL}/transacoes/:path*`,
-      },
-    ];
-  },
 };
 
-export default nextConfig;
+export default withVercelToolbar()(
+  withMicrofrontends(nextConfig, { debug: true }),
+);

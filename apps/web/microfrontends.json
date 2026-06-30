@@ -1,0 +1,22 @@
+{
+  "$schema": "https://openapi.vercel.sh/microfrontends.json",
+  "applications": {
+    "web": {
+      "development": {
+        "local": 3000,
+        "fallback": "microfrontends-marketing.labs.vercel.dev"
+      }
+    },
+    "transacoes": {
+      "development": {
+        "local": 3005
+      },
+      "routing": [
+        {
+          "group": "transacoes",
+          "paths": ["/transacoes", "/transacoes/:path*"]
+        }
+      ]
+    }
+  }
+}

@@ -17,20 +17,23 @@ Monorepo com design system de componentes compartilhados e aplicação web finan
 | MSW | ^2.13.4 | Mock de API no browser |
 | @number-flow/react | ^0.6.0 | Animação de valores numéricos |
 | Biome | ^2.4.12 | Lint e formatação |
+| @vercel/microfrontends | — | Proxy de roteamento multi-zone (desenvolvimento) |
 
 ## Estrutura do projeto
 
 ```
 tech-challenge/
 ├── apps/
-│   ├── web/                        # Aplicação Next.js 15
+│   ├── web/                        # App host — zona principal (porta 3000)
+│   │   ├── microfrontends.json     # Declaração de rotas entre zonas
 │   │   └── src/
 │   │       ├── app/
 │   │       │   ├── page.tsx        # Rota / (home)
-│   │       │   ├── components/     # Componentes de página (home)
-│   │       │   └── transacoes/     # Rota /transacoes
+│   │       │   └── components/     # Componentes de página (home)
 │   │       ├── components/         # Componentes globais (ThemeToggle)
 │   │       └── mocks/              # MSW handlers e tipos
+│   ├── transacoes/                 # Microfrontend de transações (porta 3005)
+│   │   └── src/app/transacoes/    # Rotas /transacoes e /transacoes/:path*
 │   └── storybook/                  # Storybook 8 + Vite
 │       └── src/stories/            # Stories de todos os pacotes
 ├── packages/
@@ -65,19 +68,47 @@ npm install -g pnpm
 pnpm install
 ```
 
-## Comandos
+## Rodando em desenvolvimento
 
-Execute sempre a partir da raiz do repositório.
+O ambiente de desenvolvimento requer dois processos rodando em paralelo. Execute sempre a partir da raiz do repositório.
+
+**Terminal 1 — inicia os apps Next.js:**
+
+```bash
+pnpm dev
+```
+
+**Terminal 2 — inicia o proxy de roteamento entre as zonas:**
+
+```bash
+pnpm proxy
+```
+
+Acesse a aplicação em `http://localhost:3010`. Sem o proxy, a navegação entre zonas não funciona (ex.: acessar `/transacoes` a partir do app `web`).
+
+## Comandos
 
 | Comando | Descrição |
 |---|---|
-| `pnpm dev` | Web + Storybook em paralelo |
-| `pnpm web` | Apenas Next.js (localhost:3000) |
+| `pnpm dev` | Inicia `apps/web` (porta 3000) e `apps/transacoes` (porta 3005) em paralelo |
+| `pnpm proxy` | Inicia o proxy de microfrontends na porta 3010 — necessário para roteamento entre zonas |
 | `pnpm storybook` | Apenas Storybook (localhost:6006) |
 | `pnpm build` | Build completo (packages → apps) |
 | `pnpm lint` | Lint + auto-fix com Biome |
 | `pnpm lint:check` | Lint sem auto-fix |
 | `pnpm format` | Formatação com Biome |
+
+## Microfrontends (Next.js Multi Zones)
+
+O projeto usa a estratégia de **Multi Zones** do Next.js: cada app é uma instância Next.js independente e um proxy unifica todas as rotas em um único endereço durante o desenvolvimento.
+
+```
+Usuário → proxy (:3010)
+              ├── /                  → apps/web        (:3000)
+              └── /transacoes/**     → apps/transacoes  (:3005)
+```
+
+O roteamento entre zonas é declarado em `apps/web/microfrontends.json` e consumido pelo `withMicrofrontends()` presente no `next.config.ts` de cada app. Em produção na Vercel, o proxy é substituído pela infraestrutura nativa de Multi Zones da plataforma.
 
 ## Pacotes
 
@@ -109,10 +140,10 @@ Tokens disponíveis como classes Tailwind: `bg-background`, `text-primary`, `bg-
 
 ### Rotas
 
-| Rota | Componente principal | Descrição |
-|---|---|---|
-| `/` | `HomeContent` | Saldo da conta + formulário de nova transação |
-| `/transacoes` | `TransacoesContent` | Lista completa com busca, filtro e edição |
+| Rota | App | Componente principal | Descrição |
+|---|---|---|---|
+| `/` | `apps/web` | `HomeContent` | Saldo da conta + formulário de nova transação |
+| `/transacoes` | `apps/transacoes` | `TransacoesContent` | Lista completa com busca, filtro e edição |
 
 ### Mock API (MSW)
 

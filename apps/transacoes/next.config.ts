@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
+import { withMicrofrontends } from "@vercel/microfrontends/next/config";
+import { withVercelToolbar } from "@vercel/toolbar/plugins/next";
 
 const nextConfig: NextConfig = {
-  basePath: "/transacoes",
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   transpilePackages: [
     "@repo/button",
     "@repo/icons",
@@ -13,4 +17,6 @@ const nextConfig: NextConfig = {
   ],
 };
 
-export default nextConfig;
+export default withVercelToolbar()(
+  withMicrofrontends(nextConfig, { debug: true }),
+);

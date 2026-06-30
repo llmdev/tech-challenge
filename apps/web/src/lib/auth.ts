@@ -11,22 +11,14 @@ export const auth = betterAuth({
     database: process.env.RDS_DB_NAME,
     user: process.env.RDS_USERNAME,
     password: process.env.RDS_PASSWORD,
-    // ...(process.env.NODE_ENV !== "development" && {
-    //   ssl: {
-    //     rejectUnauthorized: false,
-    //   },
-    // }),
+    ...(process.env.NODE_ENV !== "development" && {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    }),
   }),
   emailAndPassword: {
     enabled: true,
   },
-  plugins: [
-    jwt(),
-    oauthProvider({
-      // Rotas do seu Next.js (do provedor) para onde o fluxo será
-      // redirecionado quando um usuário precisar se logar ou dar autorização
-      loginPage: "/login",
-      consentPage: "/consent",
-    }),
-  ],
+  plugins: [jwt()],
 });
