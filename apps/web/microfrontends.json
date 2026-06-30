@@ -1,13 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/microfrontends.json",
   "applications": {
-    "web": {
+    "tech-challenge-web": {
       "development": {
         "local": 3000,
         "fallback": "microfrontends-marketing.labs.vercel.dev"
       }
     },
-    "transacoes": {
+    "tech-challenge-transacoes": {
       "development": {
         "local": 3005
       },
