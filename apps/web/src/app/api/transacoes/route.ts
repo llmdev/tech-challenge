@@ -1,8 +1,9 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/get-authenticated-user";
-import type { Transaction } from "../_store";
-import { create, getAll, groupByMonth } from "../_store";
+import { transactionGrouper } from "../_lib/transaction-grouper";
+import { transactionRepository } from "../_lib/transaction.repository";
+import type { TransactionInput } from "../_lib/transaction.types";
 
 export async function GET(request: NextRequest) {
   const user = await getAuthenticatedUser(request.headers);
@@ -10,7 +11,8 @@ export async function GET(request: NextRequest) {
     return new NextResponse(null, { status: 401 });
   }
 
-  return NextResponse.json(groupByMonth(await getAll(user.id)));
+  const transactions = await transactionRepository.getAll(user.id);
+  return NextResponse.json(transactionGrouper.groupByMonth(transactions));
 }
 
 export async function POST(request: NextRequest) {
@@ -19,7 +21,7 @@ export async function POST(request: NextRequest) {
     return new NextResponse(null, { status: 401 });
   }
 
-  const body = (await request.json()) as Omit<Transaction, "id">;
-  const created = await create(user.id, body);
+  const body = (await request.json()) as TransactionInput;
+  const created = await transactionRepository.create(user.id, body);
   return NextResponse.json(created, { status: 201 });
 }

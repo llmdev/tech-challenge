@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Statement } from "@repo/statement";
 import type { TransactionItemData } from "@repo/statement";
-import type { MonthGroup } from "@/app/api/_store";
+import type { MonthGroup } from "@/app/api/_lib/transaction.types";
 
 export function StatementContent({ className }: { className?: string }) {
   const [items, setItems] = useState<TransactionItemData[]>([]);
