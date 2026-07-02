@@ -128,6 +128,16 @@ export const ChevronUpIcon = createIcon(
   <polyline points="18 15 12 9 6 15" />
 );
 
+export const ChevronLeftIcon = createIcon(
+  "ChevronLeftIcon",
+  <polyline points="15 18 9 12 15 6" />
+);
+
+export const ChevronRightIcon = createIcon(
+  "ChevronRightIcon",
+  <polyline points="9 18 15 12 9 6" />
+);
+
 export const CheckIcon = createIcon(
   "CheckIcon",
   <polyline points="20 6 9 17 4 12" />

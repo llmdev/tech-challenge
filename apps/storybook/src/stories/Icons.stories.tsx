@@ -5,6 +5,8 @@ import {
   EyeIcon,
   EyeOffIcon,
   ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   PencilIcon,
   TrashIcon,
   SearchIcon,
@@ -40,6 +42,16 @@ const ALL_ICONS: IconEntry[] = [
     name: "ChevronDownIcon",
     component: ChevronDownIcon,
     tags: ["chevron", "arrow", "down", "expand", "dropdown", "select"],
+  },
+  {
+    name: "ChevronLeftIcon",
+    component: ChevronLeftIcon,
+    tags: ["chevron", "arrow", "left", "previous", "back", "pagination"],
+  },
+  {
+    name: "ChevronRightIcon",
+    component: ChevronRightIcon,
+    tags: ["chevron", "arrow", "right", "next", "forward", "pagination"],
   },
   {
     name: "PencilIcon",

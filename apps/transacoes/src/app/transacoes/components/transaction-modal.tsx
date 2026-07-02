@@ -2,7 +2,7 @@
 
 import { Modal } from "@repo/modal";
 import { TransactionForm } from "@/components/transaction-form";
-import type { Transaction } from "@/app/api/_store";
+import type { Transaction } from "@/types/transaction";
 
 export interface TransactionModalProps {
   open: boolean;

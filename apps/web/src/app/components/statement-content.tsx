@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { Statement } from "@repo/statement";
 import type { TransactionItemData } from "@repo/statement";
-import type { MonthGroup } from "@/app/api/_lib/transaction.types";
+import type { PaginatedTransactions } from "@/app/api/_lib/transaction.types";
 
 export function StatementContent({ className }: { className?: string }) {
   const [items, setItems] = useState<TransactionItemData[]>([]);
 
   const fetchTransactions = useCallback(async () => {
-    const res = await fetch("/api/transacoes");
-    const groups: MonthGroup[] = await res.json();
+    const res = await fetch("/api/transacoes?page=1&pageSize=5");
+    const { groups }: PaginatedTransactions = await res.json();
 
     const all = groups.flatMap((g) =>
       g.transactions.map((tx) => ({
@@ -22,7 +22,7 @@ export function StatementContent({ className }: { className?: string }) {
       }))
     );
 
-    setItems(all.slice(0, 5));
+    setItems(all);
   }, []);
 
   useEffect(() => {

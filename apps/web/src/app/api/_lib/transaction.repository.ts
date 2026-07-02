@@ -8,8 +8,14 @@ const SELECT_FIELDS = `
   to_char(date, 'DD/MM/YYYY') AS date, amount
 `;
 
+export interface PaginatedResult {
+  transactions: Transaction[];
+  total: number;
+}
+
 export interface ITransactionRepository {
   getAll(userId: string): Promise<Transaction[]>;
+  getPaginated(userId: string, page: number, pageSize: number): Promise<PaginatedResult>;
   findById(id: string, userId: string): Promise<Transaction | undefined>;
   create(userId: string, data: TransactionInput): Promise<Transaction>;
   update(id: string, userId: string, data: TransactionInput): Promise<Transaction | null>;
@@ -31,6 +37,25 @@ export class PostgresTransactionRepository implements ITransactionRepository {
       [userId],
     );
     return rows.map((row) => this.mapper.toDomain(row));
+  }
+
+  async getPaginated(userId: string, page: number, pageSize: number): Promise<PaginatedResult> {
+    const offset = (page - 1) * pageSize;
+    const [{ rows }, { rows: countRows }] = await Promise.all([
+      this.db.query<TransactionRow>(
+        `SELECT ${SELECT_FIELDS} FROM transacoes WHERE user_id = $1
+         ORDER BY date DESC, id DESC
+         LIMIT $2 OFFSET $3`,
+        [userId, pageSize, offset],
+      ),
+      this.db.query<{ count: string }>("SELECT COUNT(*) FROM transacoes WHERE user_id = $1", [
+        userId,
+      ]),
+    ]);
+    return {
+      transactions: rows.map((row) => this.mapper.toDomain(row)),
+      total: parseInt(countRows[0].count, 10),
+    };
   }
 
   async findById(id: string, userId: string): Promise<Transaction | undefined> {

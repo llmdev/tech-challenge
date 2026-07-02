@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import NumberFlow from "@number-flow/react";
 import { Button } from "@repo/button";
 import { Input } from "@repo/input";
+import { Select } from "@repo/select";
 import {
   EyeIcon,
   PencilIcon,
@@ -12,9 +13,26 @@ import {
   PlusIcon,
   ChevronUpIcon,
   ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from "@repo/icons";
 
 import { TransactionModal } from "./transaction-modal";
+import type { MonthGroup, PaginatedTransactions, Transaction } from "@/types/transaction";
+
+const DEFAULT_PAGE_SIZE = 10;
+
+type PageSize = 10 | 20 | 30 | 40 | 50 | 100 | "all";
+
+const PAGE_SIZE_OPTIONS: { value: string; label: string }[] = [
+  { value: "10", label: "10" },
+  { value: "20", label: "20" },
+  { value: "30", label: "30" },
+  { value: "40", label: "40" },
+  { value: "50", label: "50" },
+  { value: "100", label: "100" },
+  { value: "all", label: "Todas" },
+];
 
 type Filter = "all" | "credit" | "debit";
 
@@ -79,16 +97,25 @@ export function TransacoesContent() {
   const [editTarget, setEditTarget] = useState<Transaction | undefined>(
     undefined,
   );
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<PageSize>(DEFAULT_PAGE_SIZE);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchData = useCallback(() => {
     setLoading(true);
-    fetch(`/api/transacoes`)
+    fetch(`/api/transacoes?page=${page}&pageSize=${pageSize}`)
       .then((res) => res.json())
-      .then((data: MonthGroup[]) => {
-        setAllGroups(data);
+      .then((data: PaginatedTransactions) => {
+        setAllGroups(data.groups);
+        setTotal(data.total);
+        setTotalPages(data.totalPages);
         setLoading(false);
+        if (data.page > data.totalPages) {
+          setPage(data.totalPages);
+        }
       });
-  }, []);
+  }, [page, pageSize]);
 
   useEffect(() => {
     fetchData();
@@ -109,6 +136,30 @@ export function TransacoesContent() {
     setModalOpen(true);
   }
 
+  function handleModalSuccess() {
+    const isCreate = !editTarget;
+    if (isCreate && page !== 1) {
+      setPage(1);
+      return;
+    }
+    fetchData();
+  }
+
+  function handleSearchChange(value: string) {
+    setSearch(value);
+    setPage(1);
+  }
+
+  function handleFilterChange(f: Filter) {
+    setFilter(f);
+    setPage(1);
+  }
+
+  function handlePageSizeChange(value: string) {
+    setPageSize(value === "all" ? "all" : (Number(value) as PageSize));
+    setPage(1);
+  }
+
   const searchedGroups = applySearch(allGroups, search);
   const filteredGroups = applyFilter(searchedGroups, filter);
   const count = totalTransactions(filteredGroups);
@@ -120,7 +171,7 @@ export function TransacoesContent() {
         open={modalOpen}
         onOpenChange={setModalOpen}
         initial={editTarget}
-        onSuccess={fetchData}
+        onSuccess={handleModalSuccess}
       />
 
       <div className="bg-card rounded-2xl p-4 sm:p-6">
@@ -130,7 +181,7 @@ export function TransacoesContent() {
               Transações
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {loading ? "Carregando..." : `${count} transações encontradas`}
+              {loading ? "Carregando..." : `${count} transações nesta página`}
             </p>
           </div>
           <Button
@@ -149,7 +200,7 @@ export function TransacoesContent() {
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
             <Input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Buscar transações..."
               variant="outline"
               size="sm"
@@ -162,7 +213,7 @@ export function TransacoesContent() {
               <button
                 key={f}
                 type="button"
-                onClick={() => setFilter(f)}
+                onClick={() => handleFilterChange(f)}
                 className={`px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   filter === f
                     ? "bg-card text-foreground shadow-sm"
@@ -183,6 +234,12 @@ export function TransacoesContent() {
         filter={filter}
         onEdit={openEdit}
         onDelete={handleDelete}
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={handlePageSizeChange}
       />
     </>
   );
@@ -201,6 +258,12 @@ function TransacoesList({
   filter,
   onEdit,
   onDelete,
+  page,
+  totalPages,
+  total,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
 }: {
   groups: MonthGroup[];
   loading: boolean;
@@ -208,6 +271,12 @@ function TransacoesList({
   filter: Filter;
   onEdit: (tx: Transaction) => void;
   onDelete: (id: string) => void;
+  page: number;
+  totalPages: number;
+  total: number;
+  pageSize: PageSize;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (value: string) => void;
 }) {
   const isNegative = balanceValue < 0;
   const colorClass = loading
@@ -380,6 +449,76 @@ function TransacoesList({
             </div>
           </div>
         ))}
+      </div>
+
+      <PaginationControls
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
+    </div>
+  );
+}
+
+function PaginationControls({
+  page,
+  totalPages,
+  total,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
+}: {
+  page: number;
+  totalPages: number;
+  total: number;
+  pageSize: PageSize;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (value: string) => void;
+}) {
+  return (
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-6 pt-4 border-t border-border">
+      <p className="text-xs text-muted-foreground">
+        Página {page} de {totalPages} · {total} transações no total
+      </p>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground whitespace-nowrap">
+            Itens por página
+          </span>
+          <Select
+            value={String(pageSize)}
+            onValueChange={onPageSizeChange}
+            options={PAGE_SIZE_OPTIONS}
+            variant="outline"
+            triggerClassName="h-8 w-20 py-1.5 px-3 text-xs"
+            contentClassName="min-w-0"
+          />
+        </div>
+        {totalPages > 1 && (
+          <div className="flex items-center gap-2">
+            <Button
+              size="icon"
+              variant="outline"
+              icon={<ChevronLeftIcon className="w-4 h-4" />}
+              aria-label="Página anterior"
+              className="w-8 h-8 rounded-full"
+              disabled={page <= 1}
+              onClick={() => onPageChange(page - 1)}
+            />
+            <Button
+              size="icon"
+              variant="outline"
+              icon={<ChevronRightIcon className="w-4 h-4" />}
+              aria-label="Próxima página"
+              className="w-8 h-8 rounded-full"
+              disabled={page >= totalPages}
+              onClick={() => onPageChange(page + 1)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
