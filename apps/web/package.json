@@ -7,7 +7,8 @@
     "proxy": "microfrontends proxy microfrontends.json --local-apps tech-challenge-web tech-challenge-transacoes",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:create-tables": "tsx --env-file=.env scripts/create-tables.ts"
   },
   "dependencies": {
     "@better-auth/core": "^1.6.22",
@@ -45,6 +46,7 @@
     "baseline-browser-mapping": "^2.10.40",
     "postcss": "8.4.47",
     "tailwindcss": "3.4.14",
+    "tsx": "4.20.6",
     "typescript": "5.4.5"
   }
 }

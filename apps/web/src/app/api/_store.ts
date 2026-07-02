@@ -1,5 +1,4 @@
-// Store em memória — persiste enquanto o processo do servidor estiver rodando.
-// Equivalente ao mock que era feito via MSW (com localStorage no browser).
+import { pool } from "@/lib/db";
 
 export interface Transaction {
   id: string;
@@ -16,36 +15,67 @@ export interface MonthGroup {
   transactions: Transaction[];
 }
 
-const SEED: Transaction[] = [
-  { id: "1",  type: "credit", category: "receita",  description: "Depósito recebido",     institution: "Banco Inter",       date: "21/11/2024", amount: "+ R$ 1.500,00" },
-  { id: "2",  type: "debit",  category: "transf",   description: "Transferência enviada", institution: "João Silva",        date: "18/11/2024", amount: "- R$ 500,00"   },
-  { id: "3",  type: "debit",  category: "fatura",   description: "Pagamento de fatura",   institution: "Cartão Nubank",     date: "15/11/2024", amount: "- R$ 890,00"   },
-  { id: "4",  type: "credit", category: "pix",      description: "Pix recebido",          institution: "Maria Oliveira",    date: "10/11/2024", amount: "+ R$ 250,00"   },
-  { id: "5",  type: "debit",  category: "conta",    description: "Conta de luz",          institution: "CEMIG",             date: "05/10/2024", amount: "- R$ 89,50"    },
-  { id: "6",  type: "debit",  category: "transf",   description: "Transferência enviada", institution: "Carlos Mendes",     date: "03/10/2024", amount: "- R$ 300,00"   },
-  { id: "7",  type: "credit", category: "salario",  description: "Salário",               institution: "Empresa XYZ Ltda.", date: "01/10/2024", amount: "+ R$ 5.000,00" },
-  { id: "8",  type: "debit",  category: "boleto",   description: "Pagamento de boleto",   institution: "COPASA",            date: "28/09/2024", amount: "- R$ 45,00"    },
-  { id: "9",  type: "credit", category: "pix",      description: "Pix recebido",          institution: "Ana Paula",         date: "20/09/2024", amount: "+ R$ 180,00"   },
-  { id: "10", type: "debit",  category: "transf",   description: "Transferência enviada", institution: "Pedro Alves",       date: "15/09/2024", amount: "- R$ 750,00"   },
-];
-
-// Singleton — módulo é avaliado uma única vez por processo Node.
-let store: Transaction[] = [...SEED];
-let nextId = SEED.reduce((max, tx) => Math.max(max, parseInt(tx.id, 10)), 0) + 1;
+interface TransacaoRow {
+  id: number;
+  type: "credit" | "debit";
+  category: string;
+  description: string;
+  institution: string;
+  date: string; // já formatada como "DD/MM/YYYY" pelo to_char() na query
+  amount: string; // numeric vem como string do node-postgres, sempre positivo
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 export function parseAmountValue(amount: string): number {
   const sign = amount.includes("+") ? 1 : -1;
   const num = parseFloat(
-    amount.replace(/[^0-9,.]/g, "").replace(/\./g, "").replace(",", ".")
+    amount
+      .replace(/[^0-9,.]/g, "")
+      .replace(/\./g, "")
+      .replace(",", "."),
   );
   return sign * (Number.isNaN(num) ? 0 : num);
 }
 
+function formatAmount(value: number, type: "credit" | "debit"): string {
+  const formatted = value.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  return `${type === "credit" ? "+" : "-"} R$ ${formatted}`;
+}
+
+function parseDateToISO(ddmmyyyy: string): string {
+  const [day, month, year] = ddmmyyyy.split("/");
+  return `${year}-${month}-${day}`;
+}
+
+function rowToTransaction(row: TransacaoRow): Transaction {
+  return {
+    id: String(row.id),
+    type: row.type,
+    category: row.category,
+    description: row.description,
+    institution: row.institution,
+    date: row.date,
+    amount: formatAmount(parseFloat(row.amount), row.type),
+  };
+}
+
 const PT_MONTHS = [
-  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
 ];
 
 function dateToMonthKey(ddmmyyyy: string): string {
@@ -61,7 +91,7 @@ function dateToSortValue(ddmmyyyy: string): number {
 
 export function groupByMonth(transactions: Transaction[]): MonthGroup[] {
   const sorted = [...transactions].sort(
-    (a, b) => dateToSortValue(b.date) - dateToSortValue(a.date)
+    (a, b) => dateToSortValue(b.date) - dateToSortValue(a.date),
   );
 
   const map = new Map<string, Transaction[]>();
@@ -79,30 +109,90 @@ export function groupByMonth(transactions: Transaction[]): MonthGroup[] {
 }
 
 // ── Store API ────────────────────────────────────────────────────────────────
+// Todas as operações são sempre filtradas por user_id (o id do usuário
+// autenticado, extraído do JWT do better-auth), garantindo que cada usuário
+// só acesse suas próprias transações.
 
-export function getAll(): Transaction[] {
-  return store;
+const SELECT_FIELDS = `
+  id, type, category, description, institution,
+  to_char(date, 'DD/MM/YYYY') AS date, amount
+`;
+
+export async function getAll(userId: string): Promise<Transaction[]> {
+  const { rows } = await pool.query<TransacaoRow>(
+    `SELECT ${SELECT_FIELDS} FROM transacoes WHERE user_id = $1 ORDER BY date DESC, id DESC`,
+    [userId],
+  );
+  return rows.map(rowToTransaction);
 }
 
-export function findById(id: string): Transaction | undefined {
-  return store.find((tx) => tx.id === id);
+function isValidId(id: string): boolean {
+  return /^\d+$/.test(id);
 }
 
-export function create(data: Omit<Transaction, "id">): Transaction {
-  const tx: Transaction = { ...data, id: String(nextId++) };
-  store.push(tx);
-  return tx;
+export async function findById(id: string, userId: string): Promise<Transaction | undefined> {
+  if (!isValidId(id)) {
+    return undefined;
+  }
+  const { rows } = await pool.query<TransacaoRow>(
+    `SELECT ${SELECT_FIELDS} FROM transacoes WHERE id = $1 AND user_id = $2`,
+    [id, userId],
+  );
+  return rows[0] ? rowToTransaction(rows[0]) : undefined;
 }
 
-export function update(id: string, data: Omit<Transaction, "id">): Transaction | null {
-  const idx = store.findIndex((tx) => tx.id === id);
-  if (idx === -1) return null;
-  store[idx] = { ...data, id };
-  return store[idx];
+export async function create(userId: string, data: Omit<Transaction, "id">): Promise<Transaction> {
+  const { rows } = await pool.query<TransacaoRow>(
+    `INSERT INTO transacoes (user_id, type, category, description, institution, date, amount)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING ${SELECT_FIELDS}`,
+    [
+      userId,
+      data.type,
+      data.category,
+      data.description,
+      data.institution,
+      parseDateToISO(data.date),
+      Math.abs(parseAmountValue(data.amount)),
+    ],
+  );
+  return rowToTransaction(rows[0]);
 }
 
-export function remove(id: string): boolean {
-  const before = store.length;
-  store = store.filter((tx) => tx.id !== id);
-  return store.length < before;
+export async function update(
+  id: string,
+  userId: string,
+  data: Omit<Transaction, "id">,
+): Promise<Transaction | null> {
+  if (!isValidId(id)) {
+    return null;
+  }
+  const { rows } = await pool.query<TransacaoRow>(
+    `UPDATE transacoes
+     SET type = $1, category = $2, description = $3, institution = $4, date = $5, amount = $6
+     WHERE id = $7 AND user_id = $8
+     RETURNING ${SELECT_FIELDS}`,
+    [
+      data.type,
+      data.category,
+      data.description,
+      data.institution,
+      parseDateToISO(data.date),
+      Math.abs(parseAmountValue(data.amount)),
+      id,
+      userId,
+    ],
+  );
+  return rows[0] ? rowToTransaction(rows[0]) : null;
+}
+
+export async function remove(id: string, userId: string): Promise<boolean> {
+  if (!isValidId(id)) {
+    return false;
+  }
+  const result = await pool.query("DELETE FROM transacoes WHERE id = $1 AND user_id = $2", [
+    id,
+    userId,
+  ]);
+  return (result.rowCount ?? 0) > 0;
 }

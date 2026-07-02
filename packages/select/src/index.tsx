@@ -15,7 +15,7 @@ const selectTriggerVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-white border-border text-foreground hover:bg-white/90 data-[placeholder]:text-muted-foreground",
+          "bg-input border-border text-foreground hover:bg-input/90 data-[placeholder]:text-muted-foreground",
         ghost:
           "bg-transparent border-transparent text-foreground hover:bg-accent/10 data-[placeholder]:text-muted-foreground",
         outline:
@@ -131,7 +131,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-50 max-h-96 overflow-hidden rounded-md border border-border bg-white text-foreground shadow-md",
+        "relative z-50 max-h-96 overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
