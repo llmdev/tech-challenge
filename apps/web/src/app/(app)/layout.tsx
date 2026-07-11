@@ -11,6 +11,7 @@ function buildMenuItems(pathname: string) {
   return [
     { label: "Início", href: "/", active: pathname === "/" },
     { label: "Transações", href: "/transacoes", active: pathname.startsWith("/transacoes") },
+    { label: "Carteira", href: "/graficos", active: pathname.startsWith("/graficos") },
     { label: "", component: <LogoutButton /> },
   ];
 }

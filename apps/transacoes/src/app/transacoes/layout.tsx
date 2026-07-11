@@ -1,15 +1,12 @@
-import { headers } from "next/headers";
-import { Navbar } from "@repo/navbar";
 import { Sidebar } from "@repo/sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/logout-button";
 import { BottomNav } from "@/components/bottom-nav";
-import { auth } from "../../libs/auth";
 import { LocalNavbar } from "./components/local-navbar";
 
 const menuItems = [
-  { label: "Início", href: "/", active: false },
+  { label: "Início", href: "/", },
   { label: "Transações", href: "/transacoes", active: true },
+  { label: "Carteira", href: "/graficos" },
   { label: "", component: <LogoutButton /> },
 ];
 

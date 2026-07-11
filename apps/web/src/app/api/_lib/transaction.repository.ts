@@ -33,7 +33,7 @@ export class PostgresTransactionRepository implements ITransactionRepository {
 
   async getAll(userId: string): Promise<Transaction[]> {
     const { rows } = await this.db.query<TransactionRow>(
-      `SELECT ${SELECT_FIELDS} FROM transacoes WHERE user_id = $1 ORDER BY date DESC, id DESC`,
+      `SELECT ${SELECT_FIELDS} FROM transacoes WHERE user_id = $1 ORDER BY transacoes.date DESC, id DESC`,
       [userId],
     );
     return rows.map((row) => this.mapper.toDomain(row));
@@ -44,7 +44,7 @@ export class PostgresTransactionRepository implements ITransactionRepository {
     const [{ rows }, { rows: countRows }] = await Promise.all([
       this.db.query<TransactionRow>(
         `SELECT ${SELECT_FIELDS} FROM transacoes WHERE user_id = $1
-         ORDER BY date DESC, id DESC
+         ORDER BY transacoes.date DESC, id DESC
          LIMIT $2 OFFSET $3`,
         [userId, pageSize, offset],
       ),
