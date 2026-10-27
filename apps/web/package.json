@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev -p $(microfrontends port)",
+    "dev": "next dev -p $(FORCE_COLOR=0 microfrontends port)",
     "proxy": "microfrontends proxy microfrontends.json --local-apps tech-challenge-web tech-challenge-transacoes",
     "build": "next build",
     "start": "next start",

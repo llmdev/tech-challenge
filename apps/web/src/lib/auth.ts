@@ -6,6 +6,9 @@ import { pool } from "./db";
 
 export const auth = betterAuth({
   database: pool,
+  // em dev o app é acessado pelo proxy do microfrontends (porta 3024), que difere do BETTER_AUTH_URL
+  trustedOrigins:
+    process.env.NODE_ENV === "development" ? ["http://localhost:3024"] : [],
   emailAndPassword: {
     enabled: true,
   },

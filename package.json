@@ -18,10 +18,5 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.12",
     "typescript": "^5.4.5"
-  },
-  "pnpm": {
-    "overrides": {
-      "kysely": "^0.28.17"
-    }
   }
 }
