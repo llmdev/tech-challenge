@@ -350,12 +350,6 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
-  packages/core:
-    devDependencies:
-      typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
-
   packages/icons:
     dependencies:
       react:

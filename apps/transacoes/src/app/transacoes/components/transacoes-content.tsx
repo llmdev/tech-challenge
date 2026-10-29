@@ -104,7 +104,11 @@ export function TransacoesContent() {
 
   const fetchData = useCallback(() => {
     setLoading(true);
-    fetch(`/api/transacoes?page=${page}&pageSize=${pageSize}`)
+    const url =
+      pageSize === "all"
+        ? "/api/transacoes/all"
+        : `/api/transacoes?page=${page}&pageSize=${pageSize}`;
+    fetch(url)
       .then((res) => res.json())
       .then((data: PaginatedTransactions) => {
         setAllGroups(data.groups);

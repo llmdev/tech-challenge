@@ -342,7 +342,7 @@ export function GraficosContent() {
 
   useEffect(() => {
     async function fetchAll() {
-      const res = await fetch("/api/transacoes?pageSize=all");
+      const res = await fetch("/api/transacoes/all");
       const { groups }: PaginatedTransactions = await res.json();
       setTransactions(groups.flatMap((g) => g.transactions));
       setLoading(false);
