@@ -1,238 +1,38 @@
-# 📦 Pacote @repo/core - Criado com Sucesso!
+# Resumo do pacote @repo/core
 
-## ✅ O que foi criado
+## O que é
 
-Um novo pacote **`@repo/core`** em `packages/core` contendo a **camada principal de negócio** (domain + application) da aplicação, seguindo **Clean Architecture**.
+Camada de negócio das transações, compartilhada pelas apps `apps/web` e `apps/transacoes`, organizada em Clean Architecture (portas e adaptadores):
 
-## 📁 Estrutura
+- **domain** — `Transaction`, `Money`, `Month`, erros de domínio, `CATEGORIES`
+- **application** — porta `TransactionRepository` e os casos de uso
+- **infra** — `TransactionHttpRepository` (consome `/api/transacoes`), `FetchHttpClient`, mapper DTO ⇄ entidade
+- **main** — factories com as instâncias prontas usadas pelos componentes
 
-```
-packages/core/
-├── src/
-│   ├── domain/
-│   │   ├── errors.ts              — Exceções de domínio
-│   │   ├── money.ts               — Value object para dinheiro (Decimal.js)
-│   │   ├── transaction.ts         — Entidade Transaction
-│   │   ├── category.ts            — Categorias de transações
-│   │   └── index.ts               — Exportações
-│   ├── application/
-│   │   ├── ports/
-│   │   │   └── transaction-repository.ts  — Interface do repositório
-│   │   ├── use-cases/
-│   │   │   ├── create-transaction.ts
-│   │   │   ├── get-balance.ts
-│   │   │   ├── list-transactions.ts
-│   │   │   ├── update-transaction.ts
-│   │   │   ├── delete-transaction.ts
-│   │   │   └── index.ts            — Exportações
-│   │   └── index.ts
-│   └── testing/
-│       └── in-memory-transaction-repository.ts  — Repositório para testes
-├── package.json
-├── tsconfig.json
-├── README.md
-├── EXAMPLE.md
-└── STRUCTURE.md
-```
+Detalhes em [README.md](./README.md) e [STRUCTURE.md](./STRUCTURE.md).
 
-## 🚀 Como Usar
+## Estado atual
 
-### 1. Importar no seu app
+- Os componentes das apps não fazem `fetch` para transações; usam as factories:
+  `listTransactionsUseCase`, `listAllTransactionsUseCase`, `listLast5TransactionsUseCase`, `getBalanceUseCase`, `createTransactionUseCase`, `updateTransactionUseCase`, `deleteTransactionUseCase`.
+- As rotas de API do `apps/web` continuam com o repositório Postgres próprio (`apps/web/src/app/api/_lib`); o core no client conversa com elas por HTTP.
+- `TransactionHttpRepository.findById` ainda não está implementado (não há rota `GET /api/transacoes/:id`).
+- Não há test runner configurado nem repositório em memória no pacote.
 
-```typescript
-// Domain
-import {
-  Transaction,
-  Money,
-  ValidationError,
-  type TransactionType,
-  CATEGORIES,
-} from "@repo/core/domain";
+## Histórico de mudanças
 
-// Application
-import {
-  CreateTransactionUseCase,
-  GetBalanceUseCase,
-  type TransactionRepository,
-} from "@repo/core/application";
+### Refactor: apps passam a usar casos de uso
 
-// Testing
-import { InMemoryTransactionRepository } from "@repo/core/testing";
-```
+- A porta `TransactionRepository` e todos os casos de uso deixaram de receber `userId` — a API identifica o usuário pela sessão.
+- `UpdateTransactionUseCase` e `DeleteTransactionUseCase` lançam `NotFoundError` quando a API responde 404.
+- Novos casos de uso: `Last5TransactionsUseCase`, `ListAllTransactionsUseCase`.
+- `TransactionHttpRepository` passou a implementar `getAll`, `create`, `update` e `remove`.
+- `FetchHttpClient`: URL base corrigida, `Content-Type: application/json` em POST/PUT, `HttpError` em respostas não-OK, suporte a respostas sem corpo (204).
+- `TransactionMapper.toDomain` converte o valor da API (`"+ R$ 1.234,56"`) em `Money`; `toDto` faz o caminho inverso.
+- `Money.fromDecimal` lança `ValidationError` para entrada não numérica; novo `Money.format()`.
+- Tipo `Paginated<T>` exportado para quem implementar a porta.
+- `ListTransactionsUseCase` devolve `totalPages ≥ 1`, como a API.
 
-### 2. Criar uma entidade
+### Criação
 
-```typescript
-const tx = Transaction.create({
-  type: "credit",
-  category: "salario",
-  description: "Salário",
-  institution: "Banco Inter",
-  date: new Date(),
-  amount: Money.fromDecimal(5000),
-});
-```
-
-### 3. Usar um caso de uso
-
-```typescript
-const repository = new MyRepository(); // sua implementação
-const useCase = new CreateTransactionUseCase(repository);
-const created = await useCase.execute("user-123", tx);
-```
-
-### 4. Implementar seu repositório
-
-```typescript
-import { TransactionRepository } from "@repo/core/application";
-import type { Transaction } from "@repo/core/domain";
-
-export class PgTransactionRepository implements TransactionRepository {
-  async getAll(userId: string): Promise<Transaction[]> {
-    // Buscar do Postgres
-  }
-
-  async create(userId: string, transaction: Transaction): Promise<Transaction> {
-    // Inserir no Postgres
-  }
-
-  // ... outros métodos
-}
-```
-
-## 📚 Conteúdo
-
-### Domain Layer
-
-| Arquivo | O que faz |
-|---------|----------|
-| `errors.ts` | DomainError, ValidationError, NotFoundError, InsufficientFundsError |
-| `money.ts` | Value object para operações monetárias com Decimal.js |
-| `transaction.ts` | Entidade Transaction com invariantes de negócio |
-| `category.ts` | Categorias permitidas (PIX, Conta, Salário, etc.) |
-
-### Application Layer
-
-| Arquivo | O que faz |
-|---------|----------|
-| `ports/transaction-repository.ts` | Interface para persistência (banco/API) |
-| `use-cases/create-transaction.ts` | Criar nova transação |
-| `use-cases/get-balance.ts` | Calcular saldo (entradas - saídas) |
-| `use-cases/list-transactions.ts` | Listar transações paginadas |
-| `use-cases/update-transaction.ts` | Atualizar transação |
-| `use-cases/delete-transaction.ts` | Remover transação |
-
-### Testing Utilities
-
-| Arquivo | O que faz |
-|---------|----------|
-| `testing/in-memory-transaction-repository.ts` | Repositório em memória para testes sem BD |
-
-## 🎯 Princípios Aplicados
-
-✅ **Clean Architecture** — Domínio isolado de frameworks e infraestrutura
-✅ **Domain-Driven Design** — Entidades com lógica de negócio centralizada
-✅ **Portas & Adaptadores** — Casos de uso dependem de interfaces
-✅ **Injeção de Dependência** — Fácil trocar implementações
-✅ **Testabilidade** — Repositório em memória para testes
-✅ **Type Safety** — TypeScript strict mode
-✅ **Precisão Monetária** — Money com Decimal.js
-
-## 🔧 Dependências
-
-- `decimal.js@10.6.0` — Operações monetárias sem erro de arredondamento
-
-## 📖 Documentação
-
-- **`README.md`** — Visão geral do pacote
-- **`EXAMPLE.md`** — Exemplos de uso
-- **`STRUCTURE.md`** — Estrutura detalhada
-- **`INTEGRATION_GUIDE.md`** — Guia de integração com outros apps
-
-## ✨ Próximos Passos
-
-1. **Integrar com `apps/web`**
-   ```json
-   {
-     "dependencies": {
-       "@repo/core": "^0.0.1"
-     }
-   }
-   ```
-
-2. **Integrar com `apps/transacoes`**
-   ```typescript
-   import { CreateTransactionUseCase } from "@repo/core/application";
-   ```
-
-3. **Criar mais casos de uso conforme necessário**
-   ```
-   use-cases/
-   ├── analyze-transactions.ts
-   ├── export-statement.ts
-   ├── categorize-transaction.ts
-   └── ...
-   ```
-
-## ✅ Checklist
-
-- ✅ Pacote criado em `packages/core/`
-- ✅ Domain layer com entidades e value objects
-- ✅ Application layer com casos de uso e portas
-- ✅ Testing utilities com repositório em memória
-- ✅ TypeScript validado (sem erros)
-- ✅ package.json configurado com exports
-- ✅ tsconfig.json configurado
-- ✅ Documentação completa
-- ✅ Pronto para ser usado em outros apps!
-
-## 🎓 Exemplo de Uso Completo
-
-```typescript
-import {
-  Transaction,
-  Money,
-  ValidationError,
-} from "@repo/core/domain";
-import {
-  CreateTransactionUseCase,
-  GetBalanceUseCase,
-} from "@repo/core/application";
-import { InMemoryTransactionRepository } from "@repo/core/testing";
-
-// Setup
-const repository = new InMemoryTransactionRepository();
-const createUseCase = new CreateTransactionUseCase(repository);
-const balanceUseCase = new GetBalanceUseCase(repository);
-
-// Criar transações
-const salary = Transaction.create({
-  type: "credit",
-  category: "salario",
-  description: "Salário",
-  institution: "Banco Inter",
-  date: new Date(),
-  amount: Money.fromDecimal(5000),
-});
-
-const expense = Transaction.create({
-  type: "debit",
-  category: "compras",
-  description: "Supermercado",
-  institution: "Mercado X",
-  date: new Date(),
-  amount: Money.fromDecimal(250),
-});
-
-// Persistir
-const created1 = await createUseCase.execute("user-123", salary);
-const created2 = await createUseCase.execute("user-123", expense);
-
-// Calcular saldo
-const balance = await balanceUseCase.execute("user-123");
-console.log(`Saldo: R$ ${balance.toDecimal()}`); // 4750
-```
-
----
-
-**Agora você tem uma camada de negócio reutilizável em todos os seus apps! 🎉**
+- Pacote criado com domain (`Transaction`, `Money`, `Month`, erros, categorias) e application (porta + casos de uso de criar, listar, atualizar, excluir e saldo).

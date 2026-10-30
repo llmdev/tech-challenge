@@ -3,3 +3,4 @@
  */
 
 export type { TransactionRepository } from "./transaction-repository";
+export type { Paginated } from "./paginated";

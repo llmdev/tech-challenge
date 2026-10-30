@@ -1,173 +1,102 @@
-# Getting Started com @repo/core
+# Quickstart — @repo/core nas apps
 
-## 5 Minutos para Começar
+## 1. Habilitar o pacote na app
 
-### 1. Instalar (já está no workspace)
+`package.json` da app:
 
-```bash
-# O pacote já está em packages/core
-# Qualquer app pode importar:
+```json
+{
+  "dependencies": {
+    "@repo/core": "workspace:*"
+  }
+}
 ```
 
-### 2. Usar em seu app
+`next.config.ts`:
 
 ```typescript
-import { Transaction, Money } from "@repo/core/domain";
-import { CreateTransactionUseCase } from "@repo/core/application";
-
-// Criar transação
-const tx = Transaction.create({
-  type: "credit",
-  category: "salario",
-  description: "Salário",
-  institution: "Banco Inter",
-  date: new Date(),
-  amount: Money.fromDecimal(5000),
-});
-
-// Usar caso de uso
-const useCase = new CreateTransactionUseCase(myRepository);
-const created = await useCase.execute("user-id", tx);
+transpilePackages: ["@repo/core", /* ... */],
 ```
 
-## Casos de Uso Principais
+Depois rode `pnpm install` na raiz do repositório.
 
-### 1️⃣ CreateTransactionUseCase
-Cria e persiste uma transação nova.
-
-```typescript
-const useCase = new CreateTransactionUseCase(repository);
-const tx = await useCase.execute("user-id", transaction);
-```
-
-### 2️⃣ GetBalanceUseCase
-Calcula o saldo (entradas - saídas).
+## 2. Listar
 
 ```typescript
-const useCase = new GetBalanceUseCase(repository);
-const balance = await useCase.execute("user-id");
-console.log(balance.toDecimal()); // 4750.50
-```
+import { listTransactionsUseCase, listAllTransactionsUseCase } from "@repo/core";
 
-### 3️⃣ ListTransactionsUseCase
-Lista transações com paginação.
-
-```typescript
-const useCase = new ListTransactionsUseCase(repository);
-const result = await useCase.execute({
-  userId: "user-id",
+// Paginado
+const { transactions, page, total, totalPages } = await listTransactionsUseCase.execute({
   page: 1,
   pageSize: 10,
 });
 
-// result.transactions, result.total, result.totalPages
+// Todas (ex.: gráficos)
+const all = await listAllTransactionsUseCase.execute();
 ```
 
-### 4️⃣ UpdateTransactionUseCase
-Atualiza uma transação.
+Também há `listLast5TransactionsUseCase.execute()` (extrato) e `getBalanceUseCase.execute()` (saldo como `Money`).
+
+## 3. Criar
+
+Monte a entidade com `Transaction.create` — ela valida os dados antes de qualquer requisição:
 
 ```typescript
-const useCase = new UpdateTransactionUseCase(repository);
-const updated = await useCase.execute("tx-id", "user-id", newTransaction);
-```
+import { Money, Transaction, createTransactionUseCase } from "@repo/core";
 
-### 5️⃣ DeleteTransactionUseCase
-Remove uma transação.
-
-```typescript
-const useCase = new DeleteTransactionUseCase(repository);
-await useCase.execute("tx-id", "user-id");
-```
-
-## Value Objects
-
-### Money
-
-```typescript
-const price = Money.fromDecimal(99.99);
-const discount = Money.fromDecimal(10);
-
-const final = price.minus(discount);  // 89.99
-const doubled = price.multiply(2);    // 199.98
-
-console.log(final.toDecimal());        // 89.99
-```
-
-## Implementar seu Repositório
-
-```typescript
-import { TransactionRepository } from "@repo/core/application";
-import { Transaction } from "@repo/core/domain";
-
-export class MyRepository implements TransactionRepository {
-  async getAll(userId: string): Promise<Transaction[]> {
-    // Buscar do seu banco
-    return db.query("SELECT * FROM transactions WHERE user_id = $1", [userId]);
-  }
-
-  async create(userId: string, tx: Transaction): Promise<Transaction> {
-    // Persistir no banco
-    return db.query("INSERT INTO transactions (...) VALUES (...) RETURNING *");
-  }
-
-  // ... implemente os outros métodos
-}
-```
-
-## Testes
-
-```typescript
-import { InMemoryTransactionRepository } from "@repo/core/testing";
-import { Transaction, Money } from "@repo/core/domain";
-
-describe("meu teste", () => {
-  it("deve criar transação", async () => {
-    const repo = new InMemoryTransactionRepository();
-    const useCase = new CreateTransactionUseCase(repo);
-
-    const tx = Transaction.create({...});
-    const result = await useCase.execute("user", tx);
-
-    expect(result.id).toBeDefined();
-  });
+const transaction = Transaction.create({
+  type: "credit",
+  category: "salario",
+  description: "Salário",
+  institution: "Banco Inter",
+  date: "05/10/2026",                          // dd/mm/aaaa (ou Date)
+  amount: Money.fromDecimal(valor.replace(",", ".")), // sempre positivo
 });
+
+await createTransactionUseCase.execute(transaction);
+```
+
+## 4. Editar
+
+```typescript
+import { updateTransactionUseCase } from "@repo/core";
+
+await updateTransactionUseCase.execute(existente.id, transactionEditada);
+```
+
+## 5. Excluir
+
+```typescript
+import { NotFoundError, deleteTransactionUseCase } from "@repo/core";
+
+try {
+  await deleteTransactionUseCase.execute(id);
+} catch (error) {
+  if (!(error instanceof NotFoundError)) throw error; // já não existia
+}
 ```
 
 ## Erros
 
-```typescript
-import { ValidationError, NotFoundError } from "@repo/core/domain";
+| Erro | Quando |
+|---|---|
+| `ValidationError` | `Transaction.create` com dados inválidos; `Money.fromDecimal` com valor não numérico |
+| `NotFoundError` | `update`/`delete` de uma transação que não existe (404 da API) |
+| `HttpError` | qualquer outra resposta não-OK da API (tem `status`) |
 
-try {
-  Transaction.create({ amount: Money.zero() }); // ❌ Erro!
-} catch (error) {
-  if (error instanceof ValidationError) {
-    console.log("Validação falhou!");
-  }
-}
+Num formulário, basta exibir `error.message` — as mensagens de domínio já estão em português.
 
-try {
-  await deleteUseCase.execute("999", "user");
-} catch (error) {
-  if (error instanceof NotFoundError) {
-    console.log("Transação não existe!");
-  }
-}
-```
+## Exibição
 
-## Categorias Disponíveis
+A entidade guarda o valor como `Money` positivo; o sinal vem do `type`:
 
 ```typescript
-import { CATEGORIES } from "@repo/core/domain";
-
-CATEGORIES.forEach(cat => {
-  console.log(cat.value);  // "pix", "conta", "salario", etc.
-  console.log(cat.label);  // "PIX", "Conta", "Salário", etc.
-});
+const label = `${tx.isCredit() ? "+" : "-"} ${tx.amount.format()}`; // "+ R$ 1.234,56"
+const saldo = items.reduce((acc, tx) => acc + tx.signedAmount().toDecimal(), 0);
 ```
 
----
+Pacotes presentacionais (`@repo/statement`, etc.) não dependem do core: a app converte a entidade nas props de exibição do componente.
 
-**Pronto! Você está usando a camada de negócio reutilizável! 🎉**
+## Testes
 
-Veja [INTEGRATION_GUIDE.md](../INTEGRATION_GUIDE.md) para exemplos mais detalhados.
+Ainda não há test runner configurado (ver `CLAUDE.md`). Para testar um caso de uso, implemente `TransactionRepository` com um fake em memória — veja o [INTEGRATION_GUIDE.md](../../INTEGRATION_GUIDE.md).

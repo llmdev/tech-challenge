@@ -1,81 +1,86 @@
-@repo/core
+# Estrutura do @repo/core
+
+```
+packages/core/
 ├── src/
-│   ├── index.ts                          # Exporta domain + application
-│   ├── domain/
-│   │   ├── index.ts                      # Exporta todas as entidades
-│   │   ├── errors.ts                     # DomainError, ValidationError, NotFoundError
-│   │   ├── money.ts                      # Value object para operações monetárias
-│   │   ├── transaction.ts                # Entidade Transaction
-│   │   └── category.ts                   # Categorias permitidas
-│   ├── application/
-│   │   ├── index.ts                      # Exporta portas + casos de uso
+│   ├── index.ts                         # Exporta domain + application + factories
+│   ├── domain/                          # Regras de negócio, sem dependências externas
+│   │   ├── index.ts
+│   │   ├── errors.ts                    # DomainError, ValidationError, NotFoundError, InsufficientFundsError
+│   │   ├── money.ts                     # Value object Money (decimal.js)
+│   │   ├── month.ts                     # Value object Month (dd/mm/aaaa → nome do mês)
+│   │   ├── transaction.ts               # Entidade Transaction
+│   │   └── category.ts                  # CATEGORIES
+│   ├── application/                     # Casos de uso + portas
+│   │   ├── index.ts
 │   │   ├── ports/
 │   │   │   ├── index.ts
-│   │   │   └── transaction-repository.ts # Interface do repositório
+│   │   │   ├── transaction-repository.ts  # Interface TransactionRepository
+│   │   │   └── paginated.ts               # Tipo Paginated<T>
 │   │   └── use-cases/
-│   │       ├── index.ts                  # Exporta todos os casos
+│   │       ├── index.ts
 │   │       ├── create-transaction.ts
-│   │       ├── get-balance.ts
-│   │       ├── list-transactions.ts
 │   │       ├── update-transaction.ts
-│   │       └── delete-transaction.ts
-│   └── testing/
-│       ├── index.ts
-│       └── in-memory-transaction-repository.ts # Repositório para testes
-├── package.json
-├── tsconfig.json
-├── README.md                             # Documentação principal
-└── EXAMPLE.md                            # Exemplos de uso
-
-## Exportações
-
-### @repo/core/domain
-- Transaction, TransactionType, TransactionProps
-- Money
-- ValidationError, NotFoundError, DomainError, InsufficientFundsError
-- CATEGORIES, Category
-
-### @repo/core/application
-- TransactionRepository (interface)
-- CreateTransactionUseCase
-- GetBalanceUseCase
-- ListTransactionsUseCase
-- UpdateTransactionUseCase
-- DeleteTransactionUseCase
-- DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE
-
-### @repo/core/testing
-- InMemoryTransactionRepository
-
-## Arquitetura
-
-```
-┌─────────────────────────────────────────┐
-│          Componentes (React)            │
-└─────────────────────────────────────────┘
-                   ↓
-┌─────────────────────────────────────────┐
-│      @repo/adapters (HTTP, DTO)        │
-└─────────────────────────────────────────┘
-                   ↓
-┌─────────────────────────────────────────┐
-│    @repo/core (Use Cases & Ports)      │
-│  CreateTransactionUseCase               │
-│  TransactionRepository (interface)      │
-└─────────────────────────────────────────┘
-                   ↓
-┌─────────────────────────────────────────┐
-│     Implementações (BD, API)            │
-│  PgTransactionRepository                │
-│  HttpTransactionRepository              │
-└─────────────────────────────────────────┘
+│   │       ├── delete-transaction.ts
+│   │       ├── list-transactions.ts       # Paginado (+ DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
+│   │       ├── list-all-transactions.ts   # Sem paginação
+│   │       ├── last-5-transaction.ts      # 5 mais recentes
+│   │       └── get-balance.ts
+│   ├── infra/                           # Adaptadores (não exportados diretamente)
+│   │   ├── adapters/
+│   │   │   └── TransactionHttpRepository.ts  # Implementa a porta via API /api/transacoes
+│   │   ├── http/
+│   │   │   ├── HttpClient.ts               # Classe abstrata HttpClient + HttpError
+│   │   │   ├── FetchHttpClient.ts          # Implementação com fetch
+│   │   │   └── dtos/transaction-dto.ts     # Formato trafegado pela API
+│   │   └── mappers/
+│   │       └── transaction.mapper.ts       # DTO ⇄ entidade
+│   └── main/
+│       └── factories.ts                 # Composição: instâncias prontas dos casos de uso
+├── package.json                         # exports: "." → src/index.ts
+└── tsconfig.json
 ```
 
-## Princípios
+## Camadas e dependências
 
-✅ **Domain-Driven Design** — Entidades e value objects com lógica de negócio
-✅ **Clean Architecture** — Domínio isolado de detalhes de infra
-✅ **Portas & Adaptadores** — Casos de uso dependem de interfaces
-✅ **Testabilidade** — Implementação em memória para testes
-✅ **Precisão Monetária** — Money usa Decimal.js
-✅ **Imutabilidade** — Value objects são imutáveis
+```
+┌────────────────────────────────────────────┐
+│ apps (componentes client)                  │  importam as instâncias de main/factories
+└────────────────────────────────────────────┘
+                     ↓
+┌────────────────────────────────────────────┐
+│ main/factories                             │  liga use cases ao TransactionHttpRepository
+└────────────────────────────────────────────┘
+                     ↓
+┌────────────────────────────────────────────┐
+│ application (use cases + portas)           │  depende só do domain e da interface
+└────────────────────────────────────────────┘
+                     ↓
+┌────────────────────────────────────────────┐
+│ domain (Transaction, Money, Month, erros)  │  sem dependências de infra
+└────────────────────────────────────────────┘
+
+infra/ implementa application/ports e é usada apenas por main/
+```
+
+Fluxo de uma criação:
+
+```
+TransactionForm
+  → Transaction.create(...)                    (valida no domínio)
+  → createTransactionUseCase.execute(tx)
+  → TransactionHttpRepository.create(tx)
+  → TransactionMapper.toDto(tx)                ({ ..., amount: "+ R$ 1.234,56" })
+  → FetchHttpClient.post("/api/transacoes")
+  → rota do apps/web (Postgres)
+  → TransactionMapper.toDomain(resposta)       (Transaction com Money)
+```
+
+## Exportações de `@repo/core`
+
+- **Domain:** `Transaction`, `TransactionType`, `TransactionProps`, `TRANSACTION_TYPES`, `Money`, `Month`, `MONTH_NAMES`, `MonthName`, `CATEGORIES`, `Category`, `DomainError`, `ValidationError`, `NotFoundError`, `InsufficientFundsError`
+- **Application:** `TransactionRepository`, `Paginated` (tipos), `CreateTransactionUseCase`, `UpdateTransactionUseCase`, `DeleteTransactionUseCase`, `ListTransactionsUseCase`, `ListAllTransactionsUseCase`, `Last5TransactionsUseCase`, `GetBalanceUseCase`, `DEFAULT_PAGE_SIZE`, `MAX_PAGE_SIZE`
+- **Factories:** `listTransactionsUseCase`, `listAllTransactionsUseCase`, `listLast5TransactionsUseCase`, `getBalanceUseCase`, `createTransactionUseCase`, `updateTransactionUseCase`, `deleteTransactionUseCase`
+- **Infra:** `HttpError` (para tratar respostas não-OK da API)
+
+`TransactionHttpRepository`, `FetchHttpClient` e `TransactionMapper` não são exportados — o acesso a eles é pelas factories.

@@ -1,217 +1,153 @@
 # Guia de Integração: @repo/core
 
-## Quick Start
+Para o uso do dia a dia nos componentes (listar, criar, editar, excluir), veja o [QUICKSTART](packages/core/QUICKSTART.md). Este guia cobre o que está por trás: o contrato com a API, como implementar outro repositório e como testar casos de uso.
 
-### 1. Importar do core
+## Visão geral
+
+```
+componente client
+  → instância de @repo/core (main/factories)
+  → caso de uso (application)
+  → TransactionRepository (porta)
+  → TransactionHttpRepository (infra) → FetchHttpClient → /api/transacoes
+```
+
+Tudo é importado da raiz `@repo/core`.
+
+## A porta `TransactionRepository`
 
 ```typescript
-// Domain: entidades e value objects
-import {
-  Transaction,
-  Money,
-  ValidationError,
-  NotFoundError,
-  type TransactionType,
-  CATEGORIES,
-} from "@repo/core/domain";
+import type { Paginated, Transaction, TransactionRepository } from "@repo/core";
 
-// Application: casos de uso e portas
+interface TransactionRepository {
+  getAll(): Promise<Transaction[]>;
+  getPaginated(page: number, pageSize: number): Promise<Paginated<Transaction>>;
+  findById(id: string): Promise<Transaction | null>;
+  create(transaction: Transaction): Promise<Transaction>;
+  update(id: string, transaction: Transaction): Promise<Transaction | null>; // null = não encontrada
+  remove(id: string): Promise<boolean>;                                    // false = não encontrada
+}
+
+interface Paginated<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+```
+
+As operações não recebem `userId`: o repositório já atua no escopo do usuário autenticado (no HTTP, via sessão/cookie da API). Os casos de uso convertem `null`/`false` em `NotFoundError`.
+
+## Contrato HTTP usado pelo `TransactionHttpRepository`
+
+| Método da porta | Requisição | Observações |
+|---|---|---|
+| `getAll()` | `GET /api/transacoes/all` | resposta `{ items, page, pageSize, total, totalPages }` |
+| `getPaginated(p, s)` | `GET /api/transacoes?page=p&pageSize=s` | mesma forma de resposta |
+| `create(tx)` | `POST /api/transacoes` | corpo = DTO sem `id`; resposta = DTO criado |
+| `update(id, tx)` | `PUT /api/transacoes/:id` | 404 → `null` |
+| `remove(id)` | `DELETE /api/transacoes/:id` | 204 → `true`; 404 → `false` |
+| `findById(id)` | — | ainda não implementado (não há rota) |
+
+DTO trafegado:
+
+```json
+{
+  "id": "42",
+  "type": "credit",
+  "category": "salario",
+  "description": "Salário",
+  "institution": "Banco Inter",
+  "date": "05/10/2026",
+  "amount": "+ R$ 5.000,00"
+}
+```
+
+O `TransactionMapper` converte `amount` para `Money` positivo (`toDomain`) e de volta para `"± R$ x.xxx,xx"` (`toDto`), que é o formato que a rota espera ao gravar.
+
+Respostas não-OK, exceto os 404 tratados acima, viram `HttpError` (com `status`). `FetchHttpClient` aceita uma `baseUrl` opcional (padrão `""`, ou seja, URLs relativas — por isso as factories servem para o client).
+
+## Implementar outro repositório
+
+Qualquer persistência pode ser plugada nos casos de uso implementando a porta:
+
+```typescript
 import {
   CreateTransactionUseCase,
-  GetBalanceUseCase,
-  ListTransactionsUseCase,
-  DeleteTransactionUseCase,
-  UpdateTransactionUseCase,
+  Money,
+  Transaction,
+  type Paginated,
   type TransactionRepository,
-} from "@repo/core/application";
+} from "@repo/core";
 
-// Testing: utilitários para testes
-import { InMemoryTransactionRepository } from "@repo/core/testing";
-```
-
-### 2. Criar uma entidade
-
-```typescript
-const transaction = Transaction.create({
-  type: "debit",
-  category: "compras",
-  description: "Supermercado",
-  institution: "Mercado X",
-  date: new Date(),
-  amount: Money.fromDecimal(250.50),
-});
-```
-
-### 3. Usar um caso de uso
-
-```typescript
-// Implementar seu repositório
-class MyRepository implements TransactionRepository {
-  // ... implementação
+export class LocalStorageTransactionRepository implements TransactionRepository {
+  async getAll(): Promise<Transaction[]> { /* ... */ }
+  async getPaginated(page: number, pageSize: number): Promise<Paginated<Transaction>> { /* ... */ }
+  async findById(id: string): Promise<Transaction | null> { /* ... */ }
+  async create(transaction: Transaction): Promise<Transaction> {
+    const id = crypto.randomUUID();
+    // persistir...
+    return Transaction.restore(id, {
+      type: transaction.type,
+      category: transaction.category,
+      description: transaction.description,
+      institution: transaction.institution,
+      date: transaction.date,
+      amount: transaction.amount,
+    });
+  }
+  async update(id: string, transaction: Transaction): Promise<Transaction | null> { /* ... */ }
+  async remove(id: string): Promise<boolean> { /* ... */ }
 }
 
-const repository = new MyRepository();
-const createUseCase = new CreateTransactionUseCase(repository);
-
-const created = await createUseCase.execute("user-123", transaction);
-console.log(`ID gerado: ${created.id}`);
+const createTransaction = new CreateTransactionUseCase(new LocalStorageTransactionRepository());
 ```
 
-## Casos de Uso Disponíveis
+Pontos de atenção:
 
-### CreateTransactionUseCase
+- Uma transação vinda de `Transaction.create` não tem `id` (acessar `tx.id` lança erro). Quem atribui o `id` é a persistência, devolvendo `Transaction.restore(id, ...)`.
+- Use `Transaction.restore` ao ler dados existentes: ele não reaplica as regras de criação.
+- Para trocar o repositório usado pelas apps, altere a composição em `packages/core/src/main/factories.ts`.
 
-Cria uma transação nova e a persiste.
+## Testar casos de uso
 
-```typescript
-const useCase = new CreateTransactionUseCase(repository);
-const transaction = await useCase.execute("user-id", newTransaction);
-```
-
-### GetBalanceUseCase
-
-Calcula o saldo do usuário (entradas - saídas).
-
-```typescript
-const useCase = new GetBalanceUseCase(repository);
-const balance = await useCase.execute("user-id");
-console.log(`Saldo: R$ ${balance.toDecimal()}`);
-```
-
-### ListTransactionsUseCase
-
-Lista transações com paginação.
-
-```typescript
-const useCase = new ListTransactionsUseCase(repository);
-const result = await useCase.execute({
-  userId: "user-id",
-  page: 1,
-  pageSize: 10,
-});
-
-console.log(`Total: ${result.total}`);
-console.log(`Página: ${result.page} de ${result.totalPages}`);
-result.transactions.forEach(tx => console.log(tx.description));
-```
-
-### UpdateTransactionUseCase
-
-Atualiza uma transação existente.
-
-```typescript
-const useCase = new UpdateTransactionUseCase(repository);
-const updated = await useCase.execute(
-  "tx-id",
-  "user-id",
-  updatedTransaction
-);
-```
-
-### DeleteTransactionUseCase
-
-Remove uma transação.
-
-```typescript
-const useCase = new DeleteTransactionUseCase(repository);
-await useCase.execute("tx-id", "user-id");
-```
-
-## Implementar o Repositório
-
-Para usar em produção, você precisa implementar `TransactionRepository`:
+Ainda não há test runner configurado (o `CLAUDE.md` pede Vitest + `@testing-library/react` no workspace raiz antes de adicionar testes) e o pacote não traz repositório em memória. Quando houver, o caminho é um fake da porta:
 
 ```typescript
 import {
-  TransactionRepository,
-  type Transaction,
-} from "@repo/core/application";
+  DeleteTransactionUseCase,
+  NotFoundError,
+  type TransactionRepository,
+} from "@repo/core";
 
-export class PgTransactionRepository implements TransactionRepository {
-  constructor(private db: Pool) {}
+const repository: TransactionRepository = {
+  getAll: async () => [],
+  getPaginated: async (page, pageSize) => ({ items: [], page, pageSize, total: 0, totalPages: 1 }),
+  findById: async () => null,
+  create: async (tx) => tx,
+  update: async () => null,
+  remove: async () => false,
+};
 
-  async getAll(userId: string): Promise<Transaction[]> {
-    // Buscar do Postgres
-    const rows = await this.db.query("SELECT * FROM transactions WHERE user_id = $1", [userId]);
-    return rows.map(row => Transaction.restore(row.id, { ... }));
-  }
-
-  async create(userId: string, tx: Transaction): Promise<Transaction> {
-    // Inserir no Postgres
-    const result = await this.db.query(
-      "INSERT INTO transactions (...) VALUES (...) RETURNING *",
-      [...]
-    );
-    return Transaction.restore(result.rows[0].id, { ... });
-  }
-
-  // ... outros métodos
-}
+await expect(new DeleteTransactionUseCase(repository).execute("999")).rejects.toBeInstanceOf(NotFoundError);
 ```
 
-## Testes
+## Componentes presentacionais
 
-Use `InMemoryTransactionRepository` para testes sem banco:
-
-```typescript
-import { InMemoryTransactionRepository } from "@repo/core/testing";
-
-describe("meu caso de uso", () => {
-  it("cria transação", async () => {
-    const repository = new InMemoryTransactionRepository();
-    const useCase = new CreateTransactionUseCase(repository);
-
-    const tx = Transaction.create({ ... });
-    const created = await useCase.execute("user-1", tx);
-
-    expect(created.id).toBeDefined();
-  });
-});
-```
-
-## Value Objects
-
-### Money
-
-Operações monetárias seguras sem erro de arredondamento:
+Pacotes de UI (`packages/@repo/*`, como `@repo/statement`) não dependem do core: recebem props de exibição. A app converte a entidade, por exemplo:
 
 ```typescript
-const a = Money.fromDecimal(100.10);
-const b = Money.fromDecimal(50.05);
+import type { TransactionItemData } from "@repo/statement";
+import type { Transaction } from "@repo/core";
 
-const sum = a.plus(b);       // 150.15
-const diff = a.minus(b);     // 50.05
-const mult = a.multiply(2);  // 200.20
-const div = a.divide(2);     // 50.05
-
-const positive = Money.fromDecimal(-100).negate(); // 100
-
-if (a.greaterThan(b)) { /* ... */ }
-if (a.equals(b)) { /* ... */ }
-
-console.log(a.toDecimal()); // 100.1
-```
-
-## Erros Esperados
-
-Os casos de uso lançam exceções de domínio:
-
-```typescript
-import { ValidationError, NotFoundError } from "@repo/core/domain";
-
-try {
-  const tx = Transaction.create({ amount: Money.zero() });
-} catch (error) {
-  if (error instanceof ValidationError) {
-    console.log("Validação falhou:", error.message);
-  }
-}
-
-try {
-  await deleteUseCase.execute("999", "user-1");
-} catch (error) {
-  if (error instanceof NotFoundError) {
-    console.log("Transação não encontrada");
-  }
+function toItemData(tx: Transaction): TransactionItemData {
+  return {
+    month: tx.month,
+    description: tx.description,
+    date: tx.date,
+    amount: `${tx.isCredit() ? "+" : "-"} ${tx.amount.format()}`,
+    type: tx.type,
+  };
 }
 ```
