@@ -8,13 +8,8 @@ export interface Transaction {
   amount: string; // "+ R$ X,XX" ou "- R$ X,XX"
 }
 
-export interface MonthGroup {
-  month: string;
-  transactions: Transaction[];
-}
-
 export interface PaginatedTransactions {
-  groups: MonthGroup[];
+  items: Transaction[];
   page: number;
   pageSize: number;
   total: number;

@@ -11,6 +11,7 @@
   "dependencies": {
     "@number-flow/react": "0.6.0",
     "@repo/button": "workspace:*",
+    "@repo/core": "workspace:*",
     "@repo/icons": "workspace:*",
     "@repo/input": "workspace:*",
     "@repo/modal": "workspace:*",

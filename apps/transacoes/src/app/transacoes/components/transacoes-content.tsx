@@ -17,8 +17,15 @@ import {
   ChevronRightIcon,
 } from "@repo/icons";
 
+import {
+  NotFoundError,
+  type Transaction,
+  deleteTransactionUseCase,
+  listAllTransactionsUseCase,
+  listTransactionsUseCase,
+} from "@repo/core";
+
 import { TransactionModal } from "./transaction-modal";
-import type { MonthGroup, PaginatedTransactions, Transaction } from "@/types/transaction";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -42,54 +49,92 @@ const FILTER_LABELS: Record<Filter, string> = {
   debit: "Saídas",
 };
 
-function applySearch(groups: MonthGroup[], term: string): MonthGroup[] {
-  if (!term.trim()) return groups;
+const PT_MONTHS = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+interface MonthGroup {
+  month: string;
+  transactions: Transaction[];
+}
+
+function applySearch(items: Transaction[], term: string): Transaction[] {
+  if (!term.trim()) return items;
   const lower = term.toLowerCase();
-  return groups
-    .map((group) => ({
-      ...group,
-      transactions: group.transactions.filter(
-        (tx) =>
-          tx.description.toLowerCase().includes(lower) ||
-          tx.institution.toLowerCase().includes(lower),
-      ),
-    }))
-    .filter((group) => group.transactions.length > 0);
-}
-
-function applyFilter(groups: MonthGroup[], filter: Filter): MonthGroup[] {
-  if (filter === "all") return groups;
-  return groups
-    .map((group) => ({
-      ...group,
-      transactions: group.transactions.filter((tx) => tx.type === filter),
-    }))
-    .filter((group) => group.transactions.length > 0);
-}
-
-function totalTransactions(groups: MonthGroup[]): number {
-  return groups.reduce((acc, g) => acc + g.transactions.length, 0);
-}
-
-function parseAmount(amount: string): number {
-  const sign = amount.includes("+") ? 1 : -1;
-  const num = parseFloat(
-    amount
-      .replace(/[^0-9,.]/g, "")
-      .replace(/\./g, "")
-      .replace(",", "."),
+  return items.filter(
+    (tx) =>
+      tx.description.toLowerCase().includes(lower) ||
+      tx.institution.toLowerCase().includes(lower),
   );
-  return sign * (Number.isNaN(num) ? 0 : num);
 }
 
-function calculateBalance(groups: MonthGroup[]): number {
-  return groups
-    .flatMap((g) => g.transactions)
-    .reduce((acc, tx) => acc + parseAmount(tx.amount), 0);
+function applyFilter(items: Transaction[], filter: Filter): Transaction[] {
+  if (filter === "all") return items;
+  return items.filter((tx) => tx.type === filter);
+}
+
+function dateToMonthKey(ddmmyyyy: string): string {
+  const [, month, year] = ddmmyyyy.split("/");
+  return `${PT_MONTHS[parseInt(month, 10) - 1]} ${year}`;
+}
+
+// A API já devolve os itens ordenados por data desc; o agrupamento preserva essa ordem.
+function groupByMonth(items: Transaction[]): MonthGroup[] {
+  const map = new Map<string, Transaction[]>();
+  for (const tx of items) {
+    const key = dateToMonthKey(tx.date);
+    const group = map.get(key) ?? [];
+    group.push(tx);
+    map.set(key, group);
+  }
+  return Array.from(map.entries()).map(([month, transactions]) => ({
+    month,
+    transactions,
+  }));
+}
+
+function calculateBalance(items: Transaction[]): number {
+  return items.reduce((acc, tx) => acc + tx.signedAmount().toDecimal(), 0);
+}
+
+function formatSignedAmount(tx: Transaction): string {
+  return `${tx.isCredit() ? "+" : "-"} ${tx.amount.format()}`;
+}
+
+interface TransactionsPage {
+  items: Transaction[];
+  page: number;
+  total: number;
+  totalPages: number;
+}
+
+async function loadTransactions(page: number, pageSize: PageSize): Promise<TransactionsPage> {
+  if (pageSize === "all") {
+    const items = await listAllTransactionsUseCase.execute();
+    return { items, page: 1, total: items.length, totalPages: 1 };
+  }
+  const result = await listTransactionsUseCase.execute({ page, pageSize });
+  return {
+    items: result.transactions,
+    page: result.page,
+    total: result.total,
+    totalPages: result.totalPages,
+  };
 }
 
 export function TransacoesContent() {
-  const [allGroups, setAllGroups] = useState<MonthGroup[]>([]);
+  const [allItems, setAllItems] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
@@ -104,14 +149,9 @@ export function TransacoesContent() {
 
   const fetchData = useCallback(() => {
     setLoading(true);
-    const url =
-      pageSize === "all"
-        ? "/api/transacoes/all"
-        : `/api/transacoes?page=${page}&pageSize=${pageSize}`;
-    fetch(url)
-      .then((res) => res.json())
-      .then((data: PaginatedTransactions) => {
-        setAllGroups(data.groups);
+    loadTransactions(page, pageSize)
+      .then((data) => {
+        setAllItems(data.items);
         setTotal(data.total);
         setTotalPages(data.totalPages);
         setLoading(false);
@@ -126,8 +166,14 @@ export function TransacoesContent() {
   }, [fetchData]);
 
   async function handleDelete(id: string) {
-    await fetch(`/api/transacoes/${id}`, { method: "DELETE" });
-    fetchData();
+    try {
+      await deleteTransactionUseCase.execute(id);
+    } catch (error) {
+      // Se a transação já não existe, basta recarregar a lista.
+      if (!(error instanceof NotFoundError)) throw error;
+    } finally {
+      fetchData();
+    }
   }
 
   function openCreate() {
@@ -164,10 +210,10 @@ export function TransacoesContent() {
     setPage(1);
   }
 
-  const searchedGroups = applySearch(allGroups, search);
-  const filteredGroups = applyFilter(searchedGroups, filter);
-  const count = totalTransactions(filteredGroups);
-  const balanceValue = calculateBalance(filteredGroups);
+  const filteredItems = applyFilter(applySearch(allItems, search), filter);
+  const filteredGroups = groupByMonth(filteredItems);
+  const count = filteredItems.length;
+  const balanceValue = calculateBalance(filteredItems);
 
   return (
     <>
@@ -420,7 +466,7 @@ function TransacoesList({
                       tx.type === "credit" ? "text-accent" : "text-destructive"
                     }`}
                   >
-                    {tx.amount}
+                    {formatSignedAmount(tx)}
                   </span>
 
                   <div className="flex gap-0.5 flex-shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">

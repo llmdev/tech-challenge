@@ -14,7 +14,7 @@ export interface MonthGroup {
 }
 
 export interface PaginatedTransactions {
-  groups: MonthGroup[];
+  items: Transaction[];
   page: number;
   pageSize: number;
   total: number;

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { BalanceCard } from "@repo/balance-card";
+import { getBalanceUseCase } from "@repo/core";
 import { TransactionForm } from "@/app/components/transaction-form";
 
 const PT_DAYS = [
@@ -21,20 +22,13 @@ function todayLabel(): string {
   return `${PT_DAYS[d.getDay()]}, ${dd}/${mm}/${d.getFullYear()}`;
 }
 
-function parseBalance(balanceStr: string): number {
-  return parseFloat(
-    balanceStr.replace("R$", "").trim().replace(/\./g, "").replace(",", ".")
-  );
-}
-
 export function HomeContent({ userName }: { userName: string }) {
   const [balanceValue, setBalanceValue] = useState(0);
   const [balanceVisible, setBalanceVisible] = useState(true);
 
   const fetchBalance = useCallback(async () => {
-    const res = await fetch("/api/saldo");
-    const data: { balance: string } = await res.json();
-    setBalanceValue(parseBalance(data.balance));
+    const balance = await getBalanceUseCase.execute();
+    setBalanceValue(balance.toDecimal());
   }, []);
 
   useEffect(() => {

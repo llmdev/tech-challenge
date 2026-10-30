@@ -6,9 +6,12 @@ import { twMerge } from "tailwind-merge";
 import { Input } from "@repo/input";
 import { Select } from "@repo/select";
 import { Button } from "@repo/button";
-import type { Transaction } from "@/types/transaction";
-
-const API_BASE = "/api";
+import {
+  Money,
+  Transaction,
+  createTransactionUseCase,
+  updateTransactionUseCase,
+} from "@repo/core";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -30,22 +33,6 @@ function todayDDMMYYYY(): string {
   const dd = String(d.getDate()).padStart(2, "0");
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   return `${dd}/${mm}/${d.getFullYear()}`;
-}
-
-function parseAmountString(amount: string): string {
-  return amount.replace(/[^0-9,]/g, "").replace(",", ".");
-}
-
-function formatAmount(raw: string, tipo: "credit" | "debit"): string {
-  const num = parseFloat(raw.replace(",", "."));
-  if (Number.isNaN(num)) {
-    return `${tipo === "credit" ? "+" : "-"} R$ 0,00`;
-  }
-  const formatted = num.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  return `${tipo === "credit" ? "+" : "-"} R$ ${formatted}`;
 }
 
 function onlyNumbers(raw: string): string {
@@ -77,7 +64,7 @@ function stateFromTransaction(tx: Transaction): FormState {
     description: tx.description,
     institution: tx.institution,
     date: tx.date,
-    valor: parseAmountString(tx.amount),
+    valor: tx.amount.toDecimal().toFixed(2).replace(".", ","),
   };
 }
 
@@ -113,29 +100,20 @@ export function TransactionForm({
     setSubmitting(true);
     setError(null);
 
-    const payload: Omit<Transaction, "id"> = {
-      type: form.tipo,
-      category: form.category,
-      description: form.description,
-      institution: form.institution,
-      date: form.date,
-      amount: formatAmount(form.valor, form.tipo),
-    };
-
     try {
-      const url = initial
-        ? `${API_BASE}/transacoes/${initial.id}`
-        : `${API_BASE}/transacoes`;
-      const method = initial ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const transaction = Transaction.create({
+        type: form.tipo,
+        category: form.category,
+        description: form.description,
+        institution: form.institution,
+        date: form.date,
+        amount: Money.fromDecimal(form.valor.replace(",", ".")),
       });
 
-      if (!res.ok) {
-        throw new Error(`Erro ${res.status}`);
+      if (initial) {
+        await updateTransactionUseCase.execute(initial.id, transaction);
+      } else {
+        await createTransactionUseCase.execute(transaction);
       }
 
       if (!initial) {

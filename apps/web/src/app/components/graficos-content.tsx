@@ -23,7 +23,7 @@ import {
   saldoAcumulado,
   summaryTotals,
 } from "@/lib/transacoes-analytics";
-import type { PaginatedTransactions, Transaction } from "@/app/api/_lib/transaction.types";
+import { type Transaction, listAllTransactionsUseCase } from "@repo/core";
 
 ChartJS.register(
   CategoryScale,
@@ -342,9 +342,7 @@ export function GraficosContent() {
 
   useEffect(() => {
     async function fetchAll() {
-      const res = await fetch("/api/transacoes/all");
-      const { groups }: PaginatedTransactions = await res.json();
-      setTransactions(groups.flatMap((g) => g.transactions));
+      setTransactions(await listAllTransactionsUseCase.execute());
       setLoading(false);
     }
     fetchAll();

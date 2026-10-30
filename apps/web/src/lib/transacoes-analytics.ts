@@ -1,4 +1,4 @@
-import type { Transaction } from "@/app/api/_lib/transaction.types";
+import type { Transaction } from "@repo/core";
 
 const PT_MONTHS_SHORT = [
   "Jan",
@@ -29,13 +29,6 @@ export const CATEGORY_LABELS: Record<string, string> = {
 // Ordem fixa (mesma do formulário de transações) — os índices viram slots de
 // cor categórica, nunca reordenados por valor.
 export const CATEGORY_ORDER = Object.keys(CATEGORY_LABELS);
-
-export function parseAmount(amount: string): number {
-  const num = parseFloat(
-    amount.replace(/[^0-9,.-]/g, "").replace(/\./g, "").replace(",", "."),
-  );
-  return Number.isNaN(num) ? 0 : Math.abs(num);
-}
 
 function dateKey(ddmmyyyy: string): string {
   const [day, month, year] = ddmmyyyy.split("/");
@@ -68,7 +61,7 @@ export function monthlyEntradasSaidas(
   for (const tx of transactions) {
     const key = monthKey(tx.date);
     const entry = byMonth.get(key) ?? { key, label: monthLabel(key), entradas: 0, saidas: 0 };
-    const value = parseAmount(tx.amount);
+    const value = tx.amount.toDecimal();
     if (tx.type === "credit") {
       entry.entradas += value;
     } else {
@@ -93,7 +86,7 @@ export function gastosPorCategoria(transactions: Transaction[]): CategoryTotal[]
 
   for (const tx of transactions) {
     if (tx.type !== "debit") continue;
-    totals.set(tx.category, (totals.get(tx.category) ?? 0) + parseAmount(tx.amount));
+    totals.set(tx.category, (totals.get(tx.category) ?? 0) + tx.amount.toDecimal());
   }
 
   return CATEGORY_ORDER.filter((category) => totals.has(category)).map((category) => ({
@@ -116,7 +109,7 @@ export function movimentacaoPorInstituicao(
 
   for (const tx of transactions) {
     const institution = tx.institution.trim() || "Não informado";
-    totals.set(institution, (totals.get(institution) ?? 0) + parseAmount(tx.amount));
+    totals.set(institution, (totals.get(institution) ?? 0) + tx.amount.toDecimal());
   }
 
   const sorted = Array.from(totals.entries())
@@ -143,7 +136,7 @@ export function saldoAcumulado(transactions: Transaction[]): BalancePoint[] {
 
   for (const tx of transactions) {
     const key = dateKey(tx.date);
-    const value = parseAmount(tx.amount) * (tx.type === "credit" ? 1 : -1);
+    const value = tx.amount.toDecimal() * (tx.type === "credit" ? 1 : -1);
     byDate.set(key, (byDate.get(key) ?? 0) + value);
   }
 
@@ -166,7 +159,7 @@ export function summaryTotals(transactions: Transaction[]): SummaryTotals {
   let entradas = 0;
   let saidas = 0;
   for (const tx of transactions) {
-    const value = parseAmount(tx.amount);
+    const value = tx.amount.toDecimal();
     if (tx.type === "credit") {
       entradas += value;
     } else {

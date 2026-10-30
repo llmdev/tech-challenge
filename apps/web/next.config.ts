@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
   ],
   transpilePackages: [
     "@repo/button",
+    "@repo/core",
     "@repo/icons",
     "@repo/input",
     "@repo/modal",

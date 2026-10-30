@@ -1,8 +1,10 @@
 "use client";
 
+import { signOut } from "@/libs/auth-client";
+
 export function LogoutButton() {
   async function handleLogout() {
-    await fetch("/api/auth/sign-out", { method: "POST" });
+    await signOut();
     window.location.href = "/login";
   }
 
