@@ -1,18 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { handleApiCors, nextWithCsp } from "@/lib/security";
+
+const PUBLIC_PATHS = ["/login"];
 
 export async function middleware(request: NextRequest) {
-    const sessionCookie = getSessionCookie(request);
+  const { pathname } = request.nextUrl;
 
-    if (!sessionCookie) {
-        return NextResponse.redirect(new URL("/login", request.url));
-    }
+  if (pathname.startsWith("/api")) {
+    return handleApiCors(request);
+  }
 
-    const response = NextResponse.next();
-    response.headers.set("x-pathname", request.nextUrl.pathname);
-    return response;
+  const isPublic = PUBLIC_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+
+  if (!isPublic && !getSessionCookie(request)) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return nextWithCsp(request, { "x-pathname": pathname });
 }
 
 export const config = {
-    matcher: ["/((?!api|_next|login|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

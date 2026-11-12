@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { nextWithCsp } from "@/libs/security";
 
 export async function middleware(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
@@ -8,11 +9,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const response = NextResponse.next();
-  response.headers.set("x-pathname", request.nextUrl.pathname);
-  return response;
+  return nextWithCsp(request, { "x-pathname": request.nextUrl.pathname });
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|login|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|login|favicon.ico).*)"],
 };
