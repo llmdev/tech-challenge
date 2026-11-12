@@ -1,13 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useRef } from "react";
 import { Statement } from "@repo/statement";
 import type { TransactionItemData } from "@repo/statement";
-import { listLast5TransactionsUseCase } from "@repo/core";
-import { toStatementItem } from "@/lib/statement-items";
+import { useAppSelector, useAppStore } from "@/store/hooks";
+import { lastItemsHydrated, selectLastItems } from "@/store/transactions-slice";
 
-// initialItems vem renderizado do servidor; o cliente só refaz a busca
-// quando uma transação é criada.
+// initialItems vem renderizado do servidor e é copiado para o store uma única vez.
+// Depois disso o componente só LÊ do store: quando uma transação é criada, o
+// thunk atualiza `lastItems` e este componente re-renderiza sozinho — sem
+// event listeners nem fetch próprio.
 export function StatementContent({
   className,
   initialItems,
@@ -15,19 +17,16 @@ export function StatementContent({
   className?: string;
   initialItems: TransactionItemData[];
 }) {
-  const [items, setItems] = useState<TransactionItemData[]>(initialItems);
+  // Hidratação no primeiro render (padrão recomendado pelo guia Redux + Next.js):
+  // dispatch síncrono antes do useSelector, para o HTML do SSR já sair com os dados.
+  const store = useAppStore();
+  const hydrated = useRef(false);
+  if (!hydrated.current) {
+    store.dispatch(lastItemsHydrated(initialItems));
+    hydrated.current = true;
+  }
 
-  const fetchTransactions = useCallback(async () => {
-    const transactions = await listLast5TransactionsUseCase.execute();
-    setItems(transactions.map(toStatementItem));
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("transactionCreated", fetchTransactions);
-    return () => {
-      window.removeEventListener("transactionCreated", fetchTransactions);
-    };
-  }, [fetchTransactions]);
+  const items = useAppSelector(selectLastItems);
 
   return <Statement items={items} className={className} description="5 últimos lançamentos" />;
 }

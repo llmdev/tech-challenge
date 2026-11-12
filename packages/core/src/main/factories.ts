@@ -12,9 +12,9 @@ import {
 
 const transactionHttpRepository = /*#__PURE__*/ new TransactionHttpRepository(new FetchHttpClient());
 
+export const listLast5TransactionsUseCase = /*#__PURE__*/ new Last5TransactionsUseCase(transactionHttpRepository);
 export const listTransactionsUseCase = /*#__PURE__*/ new ListTransactionsUseCase(transactionHttpRepository);
 export const listAllTransactionsUseCase = /*#__PURE__*/ new ListAllTransactionsUseCase(transactionHttpRepository);
-export const listLast5TransactionsUseCase = /*#__PURE__*/ new Last5TransactionsUseCase(transactionHttpRepository);
 export const getBalanceUseCase = /*#__PURE__*/ new GetBalanceUseCase(transactionHttpRepository);
 export const createTransactionUseCase = /*#__PURE__*/ new CreateTransactionUseCase(transactionHttpRepository);
 export const updateTransactionUseCase = /*#__PURE__*/ new UpdateTransactionUseCase(transactionHttpRepository);

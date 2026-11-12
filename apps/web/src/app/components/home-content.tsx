@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { BalanceCard } from "@repo/balance-card";
-import { getBalanceUseCase } from "@repo/core";
 import { TransactionForm } from "@/app/components/transaction-form";
+import { useAppSelector, useAppStore } from "@/store/hooks";
+import { balanceHydrated, selectBalance } from "@/store/transactions-slice";
 
 const PT_DAYS = [
   "Domingo",
@@ -22,7 +23,9 @@ function todayLabel(): string {
   return `${PT_DAYS[d.getDay()]}, ${dd}/${mm}/${d.getFullYear()}`;
 }
 
-// initialBalance vem do servidor: o saldo já chega no HTML (sem fetch no mount)
+// initialBalance vem do servidor e é copiado para o store no primeiro render.
+// O saldo passa a ser estado GLOBAL (lido do store); quando o formulário cria
+// uma transação, o thunk atualiza o saldo e este componente re-renderiza.
 export function HomeContent({
   userName,
   initialBalance,
@@ -30,18 +33,18 @@ export function HomeContent({
   userName: string;
   initialBalance: number;
 }) {
-  const [balanceValue, setBalanceValue] = useState(initialBalance);
+  const store = useAppStore();
+  const hydrated = useRef(false);
+  if (!hydrated.current) {
+    store.dispatch(balanceHydrated(initialBalance));
+    hydrated.current = true;
+  }
+
+  const balanceValue = useAppSelector(selectBalance);
+
+  // Nem tudo vai para o Redux: mostrar/ocultar o saldo só interessa a este
+  // componente, então continua como estado LOCAL.
   const [balanceVisible, setBalanceVisible] = useState(true);
-
-  async function fetchBalance() {
-    const balance = await getBalanceUseCase.execute();
-    setBalanceValue(balance.toDecimal());
-  }
-
-  function handleTransactionSuccess() {
-    fetchBalance();
-    window.dispatchEvent(new CustomEvent("transactionCreated"));
-  }
 
   return (
     <>
@@ -53,7 +56,7 @@ export function HomeContent({
         balanceVisible={balanceVisible}
         onToggleVisibility={() => setBalanceVisible((v) => !v)}
       />
-      <TransactionForm onSuccess={handleTransactionSuccess} variant="card" />
+      <TransactionForm variant="card" />
     </>
   );
 }

@@ -6,12 +6,14 @@ import { twMerge } from "tailwind-merge";
 import { Input } from "@repo/input";
 import { Select } from "@repo/select";
 import { Button } from "@repo/button";
+import type { Transaction } from "@repo/core";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  Money,
-  Transaction,
-  createTransactionUseCase,
-  updateTransactionUseCase,
-} from "@repo/core";
+  createTransaction,
+  selectIsSaving,
+  updateTransaction,
+  type TransactionInput,
+} from "@/store/transactions-slice";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,7 +72,9 @@ function stateFromTransaction(tx: Transaction): FormState {
 
 export interface TransactionFormProps {
   initial?: Transaction;
-  onSuccess: () => void;
+  // Opcional: o store já é atualizado pelo thunk; use só para efeitos de UI
+  // (ex.: fechar um modal).
+  onSuccess?: () => void;
   onCancel?: () => void;
   variant?: "card" | "inline";
 }
@@ -84,8 +88,11 @@ export function TransactionForm({
   const [form, setForm] = useState<FormState>(() =>
     initial ? stateFromTransaction(initial) : { ...EMPTY, date: todayDDMMYYYY() }
   );
-  const [submitting, setSubmitting] = useState(false);
+  // Os campos digitados são estado LOCAL do formulário (ninguém mais precisa
+  // deles). Já o "salvando..." vem do store, pois reflete o status do thunk.
   const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const submitting = useAppSelector(selectIsSaving);
 
   const isCredit = form.tipo === "credit";
 
@@ -95,33 +102,29 @@ export function TransactionForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
     setError(null);
 
+    const input: TransactionInput = {
+      type: form.tipo,
+      category: form.category,
+      description: form.description,
+      institution: form.institution,
+      date: form.date,
+      amount: form.valor.replace(",", "."),
+    };
+
     try {
-      const transaction = Transaction.create({
-        type: form.tipo,
-        category: form.category,
-        description: form.description,
-        institution: form.institution,
-        date: form.date,
-        amount: Money.fromDecimal(form.valor.replace(",", ".")),
-      });
-
+      // dispatch(thunk) devolve uma promise; .unwrap() resolve com o payload do
+      // `fulfilled` ou lança o `rejectWithValue` do `rejected`.
       if (initial) {
-        await updateTransactionUseCase.execute(initial.id, transaction);
+        await dispatch(updateTransaction({ id: initial.id, input })).unwrap();
       } else {
-        await createTransactionUseCase.execute(transaction);
-      }
-
-      if (!initial) {
+        await dispatch(createTransaction(input)).unwrap();
         setForm({ ...EMPTY, date: todayDDMMYYYY() });
       }
-      onSuccess();
+      onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro desconhecido");
-    } finally {
-      setSubmitting(false);
+      setError(typeof err === "string" ? err : "Erro desconhecido");
     }
   }
 
