@@ -3,7 +3,12 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { EyeIcon, EyeOffIcon } from "@repo/icons";
-import NumberFlow from "@number-flow/react";
+import { lazy, Suspense } from "react";
+
+// A animação do saldo é um enhancement: o valor aparece formatado de imediato
+// e o @number-flow/react é carregado em um chunk separado.
+const NumberFlow = lazy(() => import("@number-flow/react"));
+const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -60,11 +65,13 @@ function BalanceCard({
       <p className="text-4xl font-light tracking-wide">
         {balanceVisible ? (
           balanceValue !== undefined ? (
-            <NumberFlow
-              value={balanceValue}
-              locales="pt-BR"
-              format={{ style: "currency", currency: "BRL" }}
-            />
+            <Suspense fallback={brl.format(balanceValue)}>
+              <NumberFlow
+                value={balanceValue}
+                locales="pt-BR"
+                format={{ style: "currency", currency: "BRL" }}
+              />
+            </Suspense>
           ) : (
             balance
           )

@@ -1,0 +1,108 @@
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[MFE Config] Application name from package.json: tech-challenge-web
+[MFE Config] Starting config inference {
+  appName: 'tech-challenge-web',
+  directory: 'C:\\Users\\lucas\\estudos\\tech-challenge\\apps\\web',
+  filePath: undefined
+}
+[MFE Config] Package root: C:\Users\lucas\estudos\tech-challenge\apps\web
+[MFE Config] Application name from appName parameter: tech-challenge-web
+[MFE Config] Application context: { name: 'tech-challenge-web' }
+[MFE Config] Config found at package root: C:\Users\lucas\estudos\tech-challenge\apps\web\microfrontends.json
+[MFE Config] Reading config from file: C:\Users\lucas\estudos\tech-challenge\apps\web\microfrontends.json
+[MFE Config] Config loaded with applications: [ 'tech-challenge-web', 'tech-challenge-transacoes' ]
+    env (key → val)
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+     1. NEXT_PUBLIC_MFE_CURRENT_APPLICATION      =   tech-challenge-web
+     2. NEXT_PUBLIC_MFE_CURRENT_APPLICATION_HASH =   08f349
+     3. NEXT_PUBLIC_MFE_CLIENT_CONFIG            =   {"applications":{"a0c80d":{"default":false,"routing":[{"paths":["/transacoes","/transacoes/:path*"]}]},"08f349":{"default":true}}}
+     4. MFE_CURRENT_APPLICATION                  =   tech-challenge-web
+     5. MFE_CONFIG                               =   {"$schema":"https://openapi.vercel.sh/microfrontends.json","applications":{"tech-challenge-web":{"development":{"local":3000,"fallback":"tech-challenge-web.vercel.app"}},"tech-challenge-transacoes":{"development":{"local":3005,"fallback":"tech-challenge-transacoes.vercel.app"},"routing":[{"group":"transacoes","paths":["/transacoes","/transacoes/:path*"]}]}}}
+
+    rewrites (source → destination)
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+   ▲ Next.js 16.0.10 (Turbopack)
+   - Environments: .env
+   - Experiments (use with caution):
+     ✓ multiZoneDraftMode
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[MFE Config] Application name from package.json: tech-challenge-web
+[MFE Config] Starting config inference {
+  appName: 'tech-challenge-web',
+  directory: 'C:\\Users\\lucas\\estudos\\tech-challenge\\apps\\web',
+  filePath: undefined
+}
+[MFE Config] Package root: C:\Users\lucas\estudos\tech-challenge\apps\web
+[MFE Config] Application name from appName parameter: tech-challenge-web
+[MFE Config] Application context: { name: 'tech-challenge-web' }
+[MFE Config] Config found at package root: C:\Users\lucas\estudos\tech-challenge\apps\web\microfrontends.json
+[MFE Config] Reading config from file: C:\Users\lucas\estudos\tech-challenge\apps\web\microfrontends.json
+[MFE Config] Config loaded with applications: [ 'tech-challenge-web', 'tech-challenge-transacoes' ]
+    env (key → val)
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+     1. NEXT_PUBLIC_MFE_CURRENT_APPLICATION      =   tech-challenge-web
+     2. NEXT_PUBLIC_MFE_CURRENT_APPLICATION_HASH =   08f349
+     3. NEXT_PUBLIC_MFE_CLIENT_CONFIG            =   {"applications":{"a0c80d":{"default":false,"routing":[{"paths":["/transacoes","/transacoes/:path*"]}]},"08f349":{"default":true}}}
+     4. MFE_CURRENT_APPLICATION                  =   tech-challenge-web
+     5. MFE_CONFIG                               =   {"$schema":"https://openapi.vercel.sh/microfrontends.json","applications":{"tech-challenge-web":{"development":{"local":3000,"fallback":"tech-challenge-web.vercel.app"}},"tech-challenge-transacoes":{"development":{"local":3005,"fallback":"tech-challenge-transacoes.vercel.app"},"routing":[{"group":"transacoes","paths":["/transacoes","/transacoes/:path*"]}]}}}
+
+    rewrites (source → destination)
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ ✓ Compiled successfully in 8.6s
+   Skipping validation of types
+   Collecting page data using 15 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2m2026-11-12T19:27:19.609Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:27:19.612Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:27:19.624Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:27:19.624Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:27:19.625Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:27:19.631Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:27:19.637Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+   Generating static pages using 15 workers (0/10) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 15 workers (2/10) 
+[2m2026-11-12T19:27:20.641Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:27:20.684Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+   Generating static pages using 15 workers (4/10) 
+   Generating static pages using 15 workers (7/10) 
+ ✓ Generating static pages using 15 workers (10/10) in 1096.2ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/auth/[...all]
+├ ƒ /api/health
+├ ƒ /api/saldo
+├ ƒ /api/transacoes
+├ ƒ /api/transacoes/[id]
+├ ƒ /api/transacoes/all
+├ ○ /consent
+├ ƒ /graficos
+└ ○ /login
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

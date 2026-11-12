@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import NumberFlow from "@number-flow/react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@repo/button";
 import { Input } from "@repo/input";
 import { Select } from "@repo/select";
@@ -25,7 +25,14 @@ import {
   listTransactionsUseCase,
 } from "@repo/core";
 
-import { TransactionModal } from "./transaction-modal";
+// Radix Dialog + formulário só são baixados quando o modal é aberto pela primeira vez
+const TransactionModal = dynamic(() =>
+  import("./transaction-modal").then((m) => m.TransactionModal),
+);
+
+// Animação do saldo carregada sob demanda; o fallback já mostra o valor formatado
+const NumberFlow = lazy(() => import("@number-flow/react"));
+const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -139,6 +146,8 @@ export function TransacoesContent() {
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  // mantém o modal montado após a 1ª abertura (preserva a animação de fechamento)
+  const [modalMounted, setModalMounted] = useState(false);
   const [editTarget, setEditTarget] = useState<Transaction | undefined>(
     undefined,
   );
@@ -178,11 +187,13 @@ export function TransacoesContent() {
 
   function openCreate() {
     setEditTarget(undefined);
+    setModalMounted(true);
     setModalOpen(true);
   }
 
   function openEdit(tx: Transaction) {
     setEditTarget(tx);
+    setModalMounted(true);
     setModalOpen(true);
   }
 
@@ -217,12 +228,14 @@ export function TransacoesContent() {
 
   return (
     <>
-      <TransactionModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        initial={editTarget}
-        onSuccess={handleModalSuccess}
-      />
+      {modalMounted && (
+        <TransactionModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          initial={editTarget}
+          onSuccess={handleModalSuccess}
+        />
+      )}
 
       <div className="bg-card rounded-2xl p-4 sm:p-6">
         <div className="flex items-center justify-between mb-5 gap-3">
@@ -365,11 +378,13 @@ function TransacoesList({
           {loading ? (
             "—"
           ) : (
-            <NumberFlow
-              value={balanceValue}
-              locales="pt-BR"
-              format={{ style: "currency", currency: "BRL" }}
-            />
+            <Suspense fallback={brl.format(balanceValue)}>
+              <NumberFlow
+                value={balanceValue}
+                locales="pt-BR"
+                format={{ style: "currency", currency: "BRL" }}
+              />
+            </Suspense>
           )}
         </p>
       </div>

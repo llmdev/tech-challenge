@@ -13,10 +13,13 @@
     "format:check": "biome format .",
     "storybook": "pnpm --filter=storybook dev",
     "web": "pnpm --filter=web start",
-    "transacoes": "pnpm --filter=transacoes start"
+    "transacoes": "pnpm --filter=transacoes start",
+    "perf:analyze": "node scripts/perf/analyze.mjs",
+    "perf:lighthouse": "node scripts/perf/lighthouse.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.12",
+    "@lhci/cli": "0.15.1",
     "typescript": "^5.4.5"
   }
 }

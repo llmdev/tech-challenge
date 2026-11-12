@@ -1,0 +1,21 @@
+# Lighthouse — baseline
+
+Mediana de 3 execuções por URL (run representativa do LHCI).
+
+## mobile
+
+| URL | Score | FCP | LCP | TBT | CLS | SI | JS transferido | Total transferido |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `localhost:3000/login` | 99 | 755 ms | 2055 ms | 50 ms | 0.000 | 755 ms | 150.7 kB | 162.3 kB |
+| `localhost:3000/` | 97 | 756 ms | 2502 ms | 67 ms | 0.002 | 805 ms | 201.5 kB | 226.9 kB |
+| `localhost:3000/graficos` | 91 | 756 ms | 2669 ms | 68 ms | 0.130 | 1010 ms | 233.2 kB | 256.8 kB |
+| `localhost:3001/transacoes` | 98 | 757 ms | 2356 ms | 49 ms | 0.000 | 757 ms | 201.9 kB | 219.6 kB |
+
+## desktop
+
+| URL | Score | FCP | LCP | TBT | CLS | SI | JS transferido | Total transferido |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `localhost:3000/login` | 100 | 204 ms | 470 ms | 0 ms | 0.000 | 204 ms | 150.7 kB | 162.3 kB |
+| `localhost:3000/` | 100 | 420 ms | 563 ms | 0 ms | 0.000 | 420 ms | 201.5 kB | 226.9 kB |
+| `localhost:3000/graficos` | 100 | 205 ms | 594 ms | 0 ms | 0.008 | 315 ms | 233.2 kB | 256.8 kB |
+| `localhost:3001/transacoes` | 100 | 206 ms | 507 ms | 0 ms | 0.000 | 206 ms | 201.9 kB | 219.6 kB |

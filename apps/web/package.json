@@ -15,9 +15,9 @@
     "@better-auth/oauth-provider": "^1.6.20",
     "@better-fetch/fetch": "1.1.21",
     "@number-flow/react": "0.6.0",
-    "@repo/core": "workspace:*",
     "@repo/balance-card": "workspace:*",
     "@repo/button": "workspace:*",
+    "@repo/core": "workspace:*",
     "@repo/icons": "workspace:*",
     "@repo/input": "workspace:*",
     "@repo/modal": "workspace:*",
@@ -40,6 +40,7 @@
     "tailwind-merge": "2.6.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "16.0.10",
     "@types/better-sqlite3": "7.6.13",
     "@types/node": "20.14.10",
     "@types/pg": "8.20.0",

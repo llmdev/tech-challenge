@@ -1,0 +1,240 @@
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.10 (webpack)
+   - Environments: .env
+   - Experiments (use with caution):
+     ✓ multiZoneDraftMode
+     · optimizePackageImports
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+[1mWebpack Bundle Analyzer[22m saved report to [1mC:\Users\lucas\estudos\tech-challenge\apps\web\.next\analyze\nodejs.html[22m
+[1mWebpack Bundle Analyzer[22m saved report to [1mC:\Users\lucas\estudos\tech-challenge\apps\web\.next\analyze\edge.html[22m
+[1mWebpack Bundle Analyzer[22m saved report to [1mC:\Users\lucas\estudos\tech-challenge\apps\web\.next\analyze\client.html[22m
+ ⚠ Compiled with warnings in 5.8s
+
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/lib/deflate.js
+A Node.js API is used (CompressionStream at line: 10) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/lib/deflate.js
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/jwe/flattened/decrypt.js
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/index.js
+../../node_modules/.pnpm/better-auth@1.6.14_better-s_a38072b00d4e75cc8500bd6719e1e07e/node_modules/better-auth/dist/crypto/jwt.mjs
+../../node_modules/.pnpm/better-auth@1.6.14_better-s_a38072b00d4e75cc8500bd6719e1e07e/node_modules/better-auth/dist/cookies/index.mjs
+
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/lib/deflate.js
+A Node.js API is used (DecompressionStream at line: 26) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/lib/deflate.js
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/jwe/flattened/decrypt.js
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/index.js
+../../node_modules/.pnpm/better-auth@1.6.14_better-s_a38072b00d4e75cc8500bd6719e1e07e/node_modules/better-auth/dist/crypto/jwt.mjs
+../../node_modules/.pnpm/better-auth@1.6.14_better-s_a38072b00d4e75cc8500bd6719e1e07e/node_modules/better-auth/dist/cookies/index.mjs
+
+   Skipping validation of types
+   Collecting page data using 15 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2m2026-11-12T19:46:27.416Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:46:27.417Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:46:27.434Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:46:27.439Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:46:27.441Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:46:27.445Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:46:27.457Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+   Generating static pages using 15 workers (0/10) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 15 workers (2/10) 
+[2m2026-11-12T19:46:29.148Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+   Generating static pages using 15 workers (4/10) 
+   Generating static pages using 15 workers (7/10) 
+ ✓ Generating static pages using 15 workers (10/10) in 1282.3ms
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/auth/[...all]
+├ ƒ /api/health
+├ ƒ /api/saldo
+├ ƒ /api/transacoes
+├ ƒ /api/transacoes/[id]
+├ ƒ /api/transacoes/all
+├ ○ /consent
+├ ƒ /graficos
+└ ○ /login
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.10 (webpack)
+   - Experiments (use with caution):
+     ✓ multiZoneDraftMode
+     · optimizePackageImports
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+[1mWebpack Bundle Analyzer[22m saved report to [1mC:\Users\lucas\estudos\tech-challenge\apps\transacoes\.next\analyze\nodejs.html[22m
+[1mWebpack Bundle Analyzer[22m saved report to [1mC:\Users\lucas\estudos\tech-challenge\apps\transacoes\.next\analyze\edge.html[22m
+[1mWebpack Bundle Analyzer[22m saved report to [1mC:\Users\lucas\estudos\tech-challenge\apps\transacoes\.next\analyze\client.html[22m
+ ⚠ Compiled with warnings in 6.1s
+
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/lib/deflate.js
+A Node.js API is used (CompressionStream at line: 10) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/lib/deflate.js
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/jwe/flattened/decrypt.js
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/index.js
+../../node_modules/.pnpm/better-auth@1.6.14_better-s_a38072b00d4e75cc8500bd6719e1e07e/node_modules/better-auth/dist/crypto/jwt.mjs
+../../node_modules/.pnpm/better-auth@1.6.14_better-s_a38072b00d4e75cc8500bd6719e1e07e/node_modules/better-auth/dist/cookies/index.mjs
+
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/lib/deflate.js
+A Node.js API is used (DecompressionStream at line: 26) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/lib/deflate.js
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/jwe/flattened/decrypt.js
+../../node_modules/.pnpm/jose@6.2.3/node_modules/jose/dist/webapi/index.js
+../../node_modules/.pnpm/better-auth@1.6.14_better-s_a38072b00d4e75cc8500bd6719e1e07e/node_modules/better-auth/dist/crypto/jwt.mjs
+../../node_modules/.pnpm/better-auth@1.6.14_better-s_a38072b00d4e75cc8500bd6719e1e07e/node_modules/better-auth/dist/cookies/index.mjs
+
+   Skipping validation of types
+   Collecting page data using 15 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 15 workers (0/3) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ Generating static pages using 15 workers (3/3) in 593.4ms
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)
+┌ ○ /_not-found
+└ ○ /transacoes
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.10 (Turbopack)
+   - Environments: .env
+   - Experiments (use with caution):
+     ✓ multiZoneDraftMode
+     · optimizePackageImports
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ Compiled successfully in 2.2s
+   Skipping validation of types
+   Collecting page data using 15 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2m2026-11-12T19:47:06.641Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:47:06.660Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:47:06.661Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:47:06.664Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:47:06.665Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:47:06.675Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:47:06.687Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+   Generating static pages using 15 workers (0/10) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 15 workers (2/10) 
+[2m2026-11-12T19:47:07.669Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+[2m2026-11-12T19:47:07.712Z[0m [33mWARN[0m [1m[Better Auth]:[0m Social provider google is missing clientId or clientSecret
+   Generating static pages using 15 workers (4/10) 
+   Generating static pages using 15 workers (7/10) 
+ ✓ Generating static pages using 15 workers (10/10) in 1095.8ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/auth/[...all]
+├ ƒ /api/health
+├ ƒ /api/saldo
+├ ƒ /api/transacoes
+├ ƒ /api/transacoes/[id]
+├ ƒ /api/transacoes/all
+├ ○ /consent
+├ ƒ /graficos
+└ ○ /login
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.10 (Turbopack)
+   - Experiments (use with caution):
+     ✓ multiZoneDraftMode
+     · optimizePackageImports
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ Compiled successfully in 1873.9ms
+   Skipping validation of types
+   Collecting page data using 15 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 15 workers (0/3) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ Generating static pages using 15 workers (3/3) in 468.9ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /_not-found
+└ ○ /transacoes
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+
+| App | Rota | JS (raw) | JS (gzip) | Chunks |
+|---|---|---:|---:|---:|
+| web | `/graficos` | 534.3 kB | 163.3 kB | 11 |
+| web | `/` | 616.9 kB | 191.3 kB | 12 |
+| web | `/consent` | 432.3 kB | 125.5 kB | 6 |
+| web | `/login` | 491.7 kB | 146.9 kB | 9 |
+| web | _todos os chunks_ | 958.7 kB | 309.8 kB | 17 |
+| transacoes | `/transacoes` | 624.7 kB | 192.9 kB | 9 |
+| transacoes | _todos os chunks_ | 763.9 kB | 241.4 kB | 12 |

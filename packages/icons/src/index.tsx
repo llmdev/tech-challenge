@@ -36,7 +36,7 @@ function createIcon(
   return Icon;
 }
 
-export const UserCircleIcon = createIcon(
+export const UserCircleIcon = /*#__PURE__*/ createIcon(
   "UserCircleIcon",
   <>
     <circle cx="12" cy="8" r="4" />
@@ -45,7 +45,7 @@ export const UserCircleIcon = createIcon(
   "1.5"
 );
 
-export const EyeIcon = createIcon(
+export const EyeIcon = /*#__PURE__*/ createIcon(
   "EyeIcon",
   <>
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -53,7 +53,7 @@ export const EyeIcon = createIcon(
   </>
 );
 
-export const EyeOffIcon = createIcon(
+export const EyeOffIcon = /*#__PURE__*/ createIcon(
   "EyeOffIcon",
   <>
     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
@@ -62,13 +62,13 @@ export const EyeOffIcon = createIcon(
   </>
 );
 
-export const ChevronDownIcon = createIcon(
+export const ChevronDownIcon = /*#__PURE__*/ createIcon(
   "ChevronDownIcon",
   <path d="M6 9l6 6 6-6" />,
   "2.5"
 );
 
-export const PencilIcon = createIcon(
+export const PencilIcon = /*#__PURE__*/ createIcon(
   "PencilIcon",
   <>
     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -76,7 +76,7 @@ export const PencilIcon = createIcon(
   </>
 );
 
-export const TrashIcon = createIcon(
+export const TrashIcon = /*#__PURE__*/ createIcon(
   "TrashIcon",
   <>
     <polyline points="3 6 5 6 21 6" />
@@ -87,7 +87,7 @@ export const TrashIcon = createIcon(
   </>
 );
 
-export const SearchIcon = createIcon(
+export const SearchIcon = /*#__PURE__*/ createIcon(
   "SearchIcon",
   <>
     <circle cx="11" cy="11" r="8" />
@@ -95,7 +95,7 @@ export const SearchIcon = createIcon(
   </>
 );
 
-export const PlusIcon = createIcon(
+export const PlusIcon = /*#__PURE__*/ createIcon(
   "PlusIcon",
   <>
     <line x1="12" y1="5" x2="12" y2="19" />
@@ -103,7 +103,7 @@ export const PlusIcon = createIcon(
   </>
 );
 
-export const SunIcon = createIcon(
+export const SunIcon = /*#__PURE__*/ createIcon(
   "SunIcon",
   <>
     <circle cx="12" cy="12" r="4" />
@@ -118,27 +118,27 @@ export const SunIcon = createIcon(
   </>
 );
 
-export const MoonIcon = createIcon(
+export const MoonIcon = /*#__PURE__*/ createIcon(
   "MoonIcon",
   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
 );
 
-export const ChevronUpIcon = createIcon(
+export const ChevronUpIcon = /*#__PURE__*/ createIcon(
   "ChevronUpIcon",
   <polyline points="18 15 12 9 6 15" />
 );
 
-export const ChevronLeftIcon = createIcon(
+export const ChevronLeftIcon = /*#__PURE__*/ createIcon(
   "ChevronLeftIcon",
   <polyline points="15 18 9 12 15 6" />
 );
 
-export const ChevronRightIcon = createIcon(
+export const ChevronRightIcon = /*#__PURE__*/ createIcon(
   "ChevronRightIcon",
   <polyline points="9 18 15 12 9 6" />
 );
 
-export const CheckIcon = createIcon(
+export const CheckIcon = /*#__PURE__*/ createIcon(
   "CheckIcon",
   <polyline points="20 6 9 17 4 12" />
 );

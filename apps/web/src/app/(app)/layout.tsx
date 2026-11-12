@@ -1,11 +1,13 @@
+import { Suspense } from "react";
 import { headers } from "next/headers";
+import { Statement } from "@repo/statement";
 import { Navbar } from "@repo/navbar";
 import { Sidebar } from "@repo/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/logout-button";
 import { BottomNav } from "@/app/components/bottom-nav";
 import { StatementContent } from "@/app/components/statement-content";
-import { auth } from "@/lib/auth";
+import { getLastStatementItems, getSession } from "@/lib/server-data";
 
 function buildMenuItems(pathname: string) {
   return [
@@ -14,6 +16,13 @@ function buildMenuItems(pathname: string) {
     { label: "Carteira", href: "/graficos", active: pathname.startsWith("/graficos") },
     { label: "", component: <LogoutButton /> },
   ];
+}
+
+const STATEMENT_CLASS = "lg:w-60 lg:flex-shrink-0";
+
+async function StatementSection() {
+  const items = await getLastStatementItems();
+  return <StatementContent className={STATEMENT_CLASS} initialItems={items} />;
 }
 
 export default async function AppLayout({
@@ -25,7 +34,7 @@ export default async function AppLayout({
   const pathname = headersList.get("x-pathname") ?? "/";
   const menuItems = buildMenuItems(pathname);
 
-  const session = await auth.api.getSession({ headers: headersList });
+  const session = await getSession();
   const userName = session?.user?.name ?? "Usuário";
 
   return (
@@ -50,7 +59,10 @@ export default async function AppLayout({
             {children}
           </div>
 
-          <StatementContent className="lg:w-60 lg:flex-shrink-0" />
+          {/* streaming: o extrato não bloqueia o render do conteúdo principal */}
+          <Suspense fallback={<Statement items={[]} className={STATEMENT_CLASS} description="5 últimos lançamentos" />}>
+            <StatementSection />
+          </Suspense>
         </div>
       </main>
 

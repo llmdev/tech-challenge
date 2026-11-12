@@ -1,0 +1,100 @@
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[MFE Config] Application name from package.json: tech-challenge-transacoes
+[MFE Config] Starting config inference {
+  appName: 'tech-challenge-transacoes',
+  directory: 'C:\\Users\\lucas\\estudos\\tech-challenge\\apps\\transacoes',
+  filePath: undefined
+}
+[MFE Config] Package root: C:\Users\lucas\estudos\tech-challenge\apps\transacoes
+[MFE Config] Application name from appName parameter: tech-challenge-transacoes
+[MFE Config] Application context: { name: 'tech-challenge-transacoes' }
+[MFE Config] Repository root: C:\Users\lucas\estudos\tech-challenge Is monorepo: true
+[MFE Config] Searching for config in .vercel directory: C:\Users\lucas\estudos\tech-challenge\apps\transacoes\.vercel
+[MFE Config] Inferring microfrontends location in monorepo for application: tech-challenge-transacoes
+[MFE Config] Searching repository for configs containing application: tech-challenge-transacoes
+[MFE Config] Found 1 config file(s) in repository
+[MFE Config] Found application in config: C:/Users/lucas/estudos/tech-challenge/apps/web/microfrontends.json
+[MFE Config] Total matching config files: 1
+[MFE Config] Inferred package location: C:/Users/lucas/estudos/tech-challenge/apps/web
+[MFE Config] Config found in inferred package: C:\Users\lucas\estudos\tech-challenge\apps\web\microfrontends.json
+[MFE Config] Reading config from file: C:\Users\lucas\estudos\tech-challenge\apps\web\microfrontends.json
+[MFE Config] Config loaded with applications: [ 'tech-challenge-web', 'tech-challenge-transacoes' ]
+    env (key → val)
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+     1. NEXT_PUBLIC_MFE_CURRENT_APPLICATION      =   tech-challenge-transacoes
+     2. NEXT_PUBLIC_MFE_CURRENT_APPLICATION_HASH =   a0c80d
+     3. NEXT_PUBLIC_MFE_CLIENT_CONFIG            =   {"applications":{"a0c80d":{"default":false,"routing":[{"paths":["/transacoes","/transacoes/:path*"]}]},"08f349":{"default":true}}}
+     4. NEXT_PUBLIC_VERCEL_FIREWALL_PATH_PREFIX  =   /vc-ap-a0c80d
+     5. MFE_CURRENT_APPLICATION                  =   tech-challenge-transacoes
+     6. MFE_CONFIG                               =   {"$schema":"https://openapi.vercel.sh/microfrontends.json","applications":{"tech-challenge-web":{"development":{"local":3000,"fallback":"tech-challenge-web.vercel.app"}},"tech-challenge-transacoes":{"development":{"local":3005,"fallback":"tech-challenge-transacoes.vercel.app"},"routing":[{"group":"transacoes","paths":["/transacoes","/transacoes/:path*"]}]}}}
+
+    rewrites (source → destination)
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+     1. /vc-ap-a0c80d/_next/:path+                             →  /_next/:path+
+     2. /vc-ap-a0c80d/.well-known/vercel/flags                 →  /.well-known/vercel/flags
+     3. /vc-ap-a0c80d/.well-known/vercel/rate-limit-api/:path* →  /.well-known/vercel/rate-limit-api/:path*
+     4. /vc-ap-a0c80d/_vercel/:path*                           →  /_vercel/:path*
+
+   ▲ Next.js 16.0.10 (Turbopack)
+   - Experiments (use with caution):
+     ✓ multiZoneDraftMode
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[MFE Config] Application name from package.json: tech-challenge-transacoes
+[MFE Config] Starting config inference {
+  appName: 'tech-challenge-transacoes',
+  directory: 'C:\\Users\\lucas\\estudos\\tech-challenge\\apps\\transacoes',
+  filePath: undefined
+}
+[MFE Config] Package root: C:\Users\lucas\estudos\tech-challenge\apps\transacoes
+[MFE Config] Application name from appName parameter: tech-challenge-transacoes
+[MFE Config] Application context: { name: 'tech-challenge-transacoes' }
+[MFE Config] Repository root: C:\Users\lucas\estudos\tech-challenge Is monorepo: true
+[MFE Config] Searching for config in .vercel directory: C:\Users\lucas\estudos\tech-challenge\apps\transacoes\.vercel
+[MFE Config] Inferring microfrontends location in monorepo for application: tech-challenge-transacoes
+[MFE Config] Searching repository for configs containing application: tech-challenge-transacoes
+[MFE Config] Found 1 config file(s) in repository
+[MFE Config] Found application in config: C:/Users/lucas/estudos/tech-challenge/apps/web/microfrontends.json
+[MFE Config] Total matching config files: 1
+[MFE Config] Inferred package location: C:/Users/lucas/estudos/tech-challenge/apps/web
+[MFE Config] Config found in inferred package: C:\Users\lucas\estudos\tech-challenge\apps\web\microfrontends.json
+[MFE Config] Reading config from file: C:\Users\lucas\estudos\tech-challenge\apps\web\microfrontends.json
+[MFE Config] Config loaded with applications: [ 'tech-challenge-web', 'tech-challenge-transacoes' ]
+    env (key → val)
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+     1. NEXT_PUBLIC_MFE_CURRENT_APPLICATION      =   tech-challenge-transacoes
+     2. NEXT_PUBLIC_MFE_CURRENT_APPLICATION_HASH =   a0c80d
+     3. NEXT_PUBLIC_MFE_CLIENT_CONFIG            =   {"applications":{"a0c80d":{"default":false,"routing":[{"paths":["/transacoes","/transacoes/:path*"]}]},"08f349":{"default":true}}}
+     4. NEXT_PUBLIC_VERCEL_FIREWALL_PATH_PREFIX  =   /vc-ap-a0c80d
+     5. MFE_CURRENT_APPLICATION                  =   tech-challenge-transacoes
+     6. MFE_CONFIG                               =   {"$schema":"https://openapi.vercel.sh/microfrontends.json","applications":{"tech-challenge-web":{"development":{"local":3000,"fallback":"tech-challenge-web.vercel.app"}},"tech-challenge-transacoes":{"development":{"local":3005,"fallback":"tech-challenge-transacoes.vercel.app"},"routing":[{"group":"transacoes","paths":["/transacoes","/transacoes/:path*"]}]}}}
+
+    rewrites (source → destination)
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+     1. /vc-ap-a0c80d/_next/:path+                             →  /_next/:path+
+     2. /vc-ap-a0c80d/.well-known/vercel/flags                 →  /.well-known/vercel/flags
+     3. /vc-ap-a0c80d/.well-known/vercel/rate-limit-api/:path* →  /.well-known/vercel/rate-limit-api/:path*
+     4. /vc-ap-a0c80d/_vercel/:path*                           →  /_vercel/:path*
+
+ ✓ Compiled successfully in 1821.6ms
+   Skipping validation of types
+   Collecting page data using 15 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 15 workers (0/3) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ Generating static pages using 15 workers (3/3) in 441.9ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /_not-found
+└ ○ /transacoes
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)  prerendered as static content
+

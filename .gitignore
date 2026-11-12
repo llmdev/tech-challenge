@@ -14,3 +14,8 @@ skills-lock.json
 .playwright-cli
 
 .env
+
+# relatórios brutos de performance (só os .md são versionados)
+perf/*/analyze/
+perf/*/lighthouse/
+.lighthouseci

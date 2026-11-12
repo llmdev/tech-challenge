@@ -3,29 +3,26 @@
 import { useCallback, useEffect, useState } from "react";
 import { Statement } from "@repo/statement";
 import type { TransactionItemData } from "@repo/statement";
-import { type Transaction, listLast5TransactionsUseCase } from "@repo/core";
+import { listLast5TransactionsUseCase } from "@repo/core";
+import { toStatementItem } from "@/lib/statement-items";
 
-function toItemData(tx: Transaction): TransactionItemData {
-  return {
-    month: tx.month,
-    description: tx.description,
-    date: tx.date,
-    amount: `${tx.isCredit() ? "+" : "-"} ${tx.amount.format()}`,
-    type: tx.type,
-  };
-}
-
-export function StatementContent({ className }: { className?: string }) {
-  const [items, setItems] = useState<TransactionItemData[]>([]);
+// initialItems vem renderizado do servidor; o cliente só refaz a busca
+// quando uma transação é criada.
+export function StatementContent({
+  className,
+  initialItems,
+}: {
+  className?: string;
+  initialItems: TransactionItemData[];
+}) {
+  const [items, setItems] = useState<TransactionItemData[]>(initialItems);
 
   const fetchTransactions = useCallback(async () => {
     const transactions = await listLast5TransactionsUseCase.execute();
-    setItems(transactions.map(toItemData));
+    setItems(transactions.map(toStatementItem));
   }, []);
 
   useEffect(() => {
-    fetchTransactions();
-
     window.addEventListener("transactionCreated", fetchTransactions);
     return () => {
       window.removeEventListener("transactionCreated", fetchTransactions);

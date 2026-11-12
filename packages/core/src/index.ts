@@ -18,3 +18,8 @@ export * from "./main/factories";
 
 // Erro HTTP lançado pelos casos de uso das factories
 export { HttpError } from "./infra/http/HttpClient";
+
+// DTO serializável + mapper: permite buscar dados no servidor (RSC) e
+// reidratar as entidades de domínio no cliente.
+export { TransactionMapper } from "./infra/mappers/transaction.mapper";
+export type { Transaction as TransactionDto } from "./infra/http/dtos/transaction-dto";

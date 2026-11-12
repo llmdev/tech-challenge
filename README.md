@@ -97,6 +97,8 @@ Acesse a aplicação em `http://localhost:3010`. Sem o proxy, a navegação entr
 | `pnpm lint` | Lint + auto-fix com Biome |
 | `pnpm lint:check` | Lint sem auto-fix |
 | `pnpm format` | Formatação com Biome |
+| `pnpm perf:analyze <rótulo>` | Build de produção + análise de bundle (JS por rota e maiores pacotes) — ver [Performance](#performance) |
+| `pnpm perf:lighthouse <rótulo>` | Lighthouse (mobile e desktop) contra o build de produção, autenticado — ver [Performance](#performance) |
 
 ## Microfrontends (Next.js Multi Zones)
 
@@ -109,6 +111,73 @@ Usuário → proxy (:3010)
 ```
 
 O roteamento entre zonas é declarado em `apps/web/microfrontends.json` e consumido pelo `withMicrofrontends()` presente no `next.config.ts` de cada app. Em produção na Vercel, o proxy é substituído pela infraestrutura nativa de Multi Zones da plataforma.
+
+## Performance
+
+Dois scripts medem a performance dos apps `web` e `transacoes`. Use-os **antes e depois** de uma otimização, com rótulos diferentes, para comparar os resultados. Os scripts ficam em `scripts/perf/`, e os resultados vão para `perf/<rótulo>/`.
+
+### Pré-requisitos
+
+1. `apps/web/.env` configurado: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL=http://localhost:3000`, as variáveis `RDS_*` apontando para o Postgres local e **`RDS_SSL=false`**. O Postgres do `docker compose` não aceita SSL, e fora do modo `development` a conexão usa SSL por padrão.
+2. Postgres local no ar, com as tabelas criadas:
+
+   ```bash
+   docker compose up -d
+   pnpm --filter=tech-challenge-web db:create-tables
+   ```
+3. Portas **3000** e **3001** livres (pare o `pnpm dev`/`pnpm web` antes de rodar).
+
+### 1. Análise de bundle: `pnpm perf:analyze <rótulo>`
+
+```bash
+pnpm perf:analyze baseline
+```
+
+O script faz duas etapas:
+
+- **Build com webpack + `@next/bundle-analyzer`** (`ANALYZE=true next build --webpack`). Gera os treemaps interativos e a tabela dos maiores pacotes do bundle client.
+- **Build real (Turbopack)**. Mede o JS de primeira carga de cada rota, raw e gzip. O Next 16 não mostra mais esse valor no `next build`, por isso usamos o script `scripts/perf/route-sizes.mjs`.
+
+| Saída | Conteúdo |
+|---|---|
+| `perf/<rótulo>/route-sizes.md` | JS de primeira carga por rota (raw / gzip) |
+| `perf/<rótulo>/top-modules-web.md`, `top-modules-transacoes.md` | Maiores pacotes no bundle client |
+| `perf/<rótulo>/analyze/<app>/client.html` | Treemap interativo (abrir no navegador) |
+
+Ao final, o `.next` de cada app contém o build de produção pronto para o Lighthouse.
+
+### 2. Lighthouse: `pnpm perf:lighthouse <rótulo>`
+
+Rode depois do `perf:analyze`, que deixa o build de produção pronto:
+
+```bash
+pnpm perf:lighthouse baseline
+```
+
+O script:
+
+1. Sobe `web` (`:3000`) e `transacoes` (`:3001`) com `next start`, com `RDS_SSL=false` para conectar no Postgres local sem SSL.
+2. Cria e loga o usuário de teste `perf@example.local` via better-auth. O cookie de sessão é enviado ao Lighthouse e fica num arquivo temporário fora do repositório.
+3. Cadastra 60 transações de exemplo para esse usuário, se ainda não existirem.
+4. Roda o Lighthouse CI 3 vezes por URL (`/login`, `/`, `/graficos`, `/transacoes`), em mobile e desktop, e usa a mediana.
+5. Derruba os servidores.
+
+| Saída | Conteúdo |
+|---|---|
+| `perf/<rótulo>/lighthouse.md` | Score, FCP, LCP, TBT, CLS, Speed Index e kB transferidos por URL |
+| `perf/<rótulo>/lighthouse/<mobile\|desktop>/` | Relatórios HTML/JSON completos de cada execução |
+
+### Fluxo antes/depois
+
+```bash
+pnpm perf:analyze baseline && pnpm perf:lighthouse baseline
+# ... aplica as otimizações ...
+pnpm perf:analyze after && pnpm perf:lighthouse after
+```
+
+Depois compare `perf/baseline/*.md` com `perf/after/*.md`. Só os resumos `.md` são versionados; os relatórios brutos (`analyze/`, `lighthouse/`) ficam no `.gitignore`.
+
+> Para uma comparação justa, rode as duas medições na mesma máquina, com os mesmos dados e sem outros processos pesados abertos. Os números do Lighthouse são de laboratório, com throttling simulado, e servem para comparar versões, não como métrica de usuário real.
 
 ## Pacotes
 

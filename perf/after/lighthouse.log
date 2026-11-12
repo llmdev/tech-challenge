@@ -1,0 +1,17 @@
+Seed: 0 transações criadas (total >= 60).
+Running Lighthouse 3 time(s) on http://localhost:3000/login
+Run #1...done.
+Run #2...done.
+Run #3...done.
+Running Lighthouse 3 time(s) on http://localhost:3000/
+Run #1...done.
+Run #2...done.
+Run #3...done.
+Running Lighthouse 3 time(s) on http://localhost:3000/graficos
+Run #1...done.
+Run #2...done.
+Run #3...done.
+Running Lighthouse 3 time(s) on http://localhost:3001/transacoes
+Run #1...done.
+Run #2...done.
+Run #3...

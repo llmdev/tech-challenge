@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { BalanceCard } from "@repo/balance-card";
 import { getBalanceUseCase } from "@repo/core";
 import { TransactionForm } from "@/app/components/transaction-form";
@@ -22,18 +22,21 @@ function todayLabel(): string {
   return `${PT_DAYS[d.getDay()]}, ${dd}/${mm}/${d.getFullYear()}`;
 }
 
-export function HomeContent({ userName }: { userName: string }) {
-  const [balanceValue, setBalanceValue] = useState(0);
+// initialBalance vem do servidor: o saldo já chega no HTML (sem fetch no mount)
+export function HomeContent({
+  userName,
+  initialBalance,
+}: {
+  userName: string;
+  initialBalance: number;
+}) {
+  const [balanceValue, setBalanceValue] = useState(initialBalance);
   const [balanceVisible, setBalanceVisible] = useState(true);
 
-  const fetchBalance = useCallback(async () => {
+  async function fetchBalance() {
     const balance = await getBalanceUseCase.execute();
     setBalanceValue(balance.toDecimal());
-  }, []);
-
-  useEffect(() => {
-    fetchBalance();
-  }, [fetchBalance]);
+  }
 
   function handleTransactionSuccess() {
     fetchBalance();

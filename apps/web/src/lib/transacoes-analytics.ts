@@ -1,5 +1,7 @@
 import type { Transaction } from "@repo/core";
 
+export const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
 const PT_MONTHS_SHORT = [
   "Jan",
   "Fev",
